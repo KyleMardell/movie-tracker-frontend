@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { login } from "../lib/api";
 import { useAuth } from "../useAuth";
-
+import { Container, Row, Col, Button } from "react-bootstrap";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -25,13 +25,18 @@ const LoginPage = () => {
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-                <button type="submit">Login</button>
-            </form>
-        </div>
+        <Container>
+            <Row>
+                <Col>
+                    <form onSubmit={handleSubmit}>
+                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                        <Button type="submit" variant="primary">Login</Button>
+                    </form>
+                </Col>
+            </Row>
+            
+        </Container>
     )
 }
 
