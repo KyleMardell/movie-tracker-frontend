@@ -1,13 +1,13 @@
 "use client"
 import { useState } from "react";
 import { login } from "../lib/api";
+import { useAuth } from "../useAuth";
 
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [movieTrackerData, setMovieTrackerData] = useState({user: "", accessToken: "", refreshToken: ""}); 
-
+    const { setAuthData } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,9 +19,8 @@ const LoginPage = () => {
             accessToken: response.data.access,
             refreshToken: response.data.refresh
         };
-
+        setAuthData(data);
         localStorage.setItem("movieTrackerData", JSON.stringify(data));
-        setMovieTrackerData(data);
         console.log(username, password);
     }
 

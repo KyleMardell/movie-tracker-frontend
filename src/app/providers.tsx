@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react";
 
 
 // Types
@@ -8,6 +8,11 @@ type AuthContextType = {
     user: string | null,
     accessToken: string | null,
     refreshToken: string | null,
+    setAuthData: (data: {
+        user: string
+        accessToken: string
+        refreshToken: string
+    }) => void
 }
 
 type AuthProviderProps = {
@@ -24,6 +29,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
+    const setAuthData = (data: {
+        user: string
+        accessToken: string
+        refreshToken: string
+    }) => {
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken);
+        setUser(data.user);
+    };
+
     useEffect(() => {
         const stored = localStorage.getItem("movieTrackerData")
         if (stored) {
@@ -38,6 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         accessToken,
         refreshToken,
+        setAuthData,
     }
 
     return (
