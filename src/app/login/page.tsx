@@ -31,7 +31,6 @@ const LoginPage = () => {
                 refreshToken: response.data.refresh
             };
             setAuthData(data);
-            localStorage.setItem("movieTrackerData", JSON.stringify(data));
             router.push("/");
         } catch (err: any) {
             if (err.response && err.response.status === 401) {

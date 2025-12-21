@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useEffect, useState } from "react";
+import { refreshAccessToken } from "./lib/api";
 
 
 // Types
@@ -14,7 +15,7 @@ type AuthContextType = {
         refreshToken: string
     }) => void,
     logout: () => void,
-    isLoading: boolean | true,
+    isLoading: boolean,
 }
 
 type AuthProviderProps = {
@@ -37,9 +38,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         accessToken: string
         refreshToken: string
     }) => {
-        setAccessToken(data.accessToken);
-        setRefreshToken(data.refreshToken);
         setUser(data.user);
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken); 
+        localStorage.setItem("movieTrackerData", JSON.stringify(data));
+    };
+
+    const logout = () => {
+        setUser(null);
+        setAccessToken(null);
+        setRefreshToken(null);
+        localStorage.removeItem("movieTrackerData");
+    }
+
+    const handleRefreshToken = async () => {
+        if (!user) return;
+        if (!refreshToken) return;
+        try {
+            const response = await refreshAccessToken(refreshToken);
+            setAuthData({
+                user: user!, // current user from state
+                accessToken: response.access,
+                refreshToken: response.refresh || refreshToken
+            });
+        } catch (err) {
+            console.error("Failed to refresh token", err);
+            logout();
+        }
     };
 
     useEffect(() => {
@@ -53,12 +78,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
     }, []);
 
-    const logout = () => {
-        setUser(null);
-        setAccessToken(null);
-        setRefreshToken(null);
-        localStorage.removeItem("movieTrackerData");
-    }
+    useEffect(() => {
+        const interval = setInterval(() => {
+            handleRefreshToken();
+        }, 28 * 60 * 1000); // adjust based on token expiry | min - sec - milisec
+        return () => clearInterval(interval);
+    }, [refreshToken, user]);
 
     let value = {
         user,
