@@ -13,6 +13,7 @@ type AuthContextType = {
         accessToken: string
         refreshToken: string
     }) => void
+    logout: () => void
 }
 
 type AuthProviderProps = {
@@ -49,11 +50,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }, []);
 
+    const logout = () => {
+        setUser(null);
+        setAccessToken(null);
+        setRefreshToken(null);
+        localStorage.removeItem("movieTrackerData");
+    }
+
     let value = {
         user,
         accessToken,
         refreshToken,
         setAuthData,
+        logout,
     }
 
     return (
