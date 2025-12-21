@@ -1,6 +1,4 @@
-import axios from "axios";
-
-axios.defaults.baseURL = 'https://movie-tracker-api.cap.kylemardell.me/';
+import api from "./axios";
 
 // Types
 type LoginPayload = {
@@ -16,11 +14,11 @@ type RefreshResponse = {
 // Login function
 export const login = (username: string, password: string) => {
     const data: LoginPayload = { username, password };
-    return axios.post('/api/token/', data);
+    return api.post('/api/token/', data);
 }
 
 // Refresh access token function
 export const refreshAccessToken = async (refreshToken: string): Promise<RefreshResponse> => {
-    const response = await axios.post('/api/token/refresh/', { refresh: refreshToken });
+    const response = await api.post('/api/token/refresh/', { refresh: refreshToken });
     return response.data;
 };
