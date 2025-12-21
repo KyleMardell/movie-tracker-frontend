@@ -12,8 +12,9 @@ type AuthContextType = {
         user: string
         accessToken: string
         refreshToken: string
-    }) => void
-    logout: () => void
+    }) => void,
+    logout: () => void,
+    isLoading: boolean | true,
 }
 
 type AuthProviderProps = {
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<string | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const setAuthData = (data: {
         user: string
@@ -48,6 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setAccessToken(data.accessToken)
             setRefreshToken(data.refreshToken)
         }
+        setIsLoading(false);
     }, []);
 
     const logout = () => {
@@ -63,6 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         refreshToken,
         setAuthData,
         logout,
+        isLoading,
     }
 
     return (

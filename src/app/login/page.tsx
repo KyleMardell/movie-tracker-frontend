@@ -1,13 +1,21 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { login } from "../lib/api";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../useAuth";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { setAuthData } = useAuth();
+    const { setAuthData, user, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && user) {
+            router.push("/");
+        }
+    }, [user, isLoading]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,7 +29,7 @@ const LoginPage = () => {
         };
         setAuthData(data);
         localStorage.setItem("movieTrackerData", JSON.stringify(data));
-        console.log(username, password);
+        router.push("/");
     }
 
     return (
