@@ -24,7 +24,6 @@ const LoginPage = () => {
         e.preventDefault();
         try {
             const response =  await login(username, password);
-            console.log(response.data);
             const data = {
                 user: username,
                 accessToken: response.data.access,
