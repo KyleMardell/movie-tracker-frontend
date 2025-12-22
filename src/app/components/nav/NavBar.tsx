@@ -24,7 +24,7 @@ const NavBar = () => {
 
     return (
         <>
-        <Navbar expanded={expanded} ref={ref} expand="lg" className="bg-body-tertiary">
+        <Navbar expanded={expanded} ref={ref} expand="lg">
             <Container>
                 <Navbar.Brand as={Link} href="/">Movie Tracker {user ? <> - {user}</> : <></>}</Navbar.Brand>
                 <Navbar.Toggle onClick={() => setExpanded(!expanded)} aria-controls="navbar-nav" />

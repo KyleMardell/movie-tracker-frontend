@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { login } from "../lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../useAuth";
-import { Container, Row, Col, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Button, Alert, Form } from "react-bootstrap";
+import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
     const [username, setUsername] = useState<string | "">("");
@@ -53,14 +54,24 @@ const LoginPage = () => {
                 </Alert>
                 : <></>
             }
-            
-            <Row>
+            <Row className="mt-5">
                 <Col>
-                    <form onSubmit={handleSubmit}>
-                        <input type="text" value={username} onChange={e => { setUsername(e.target.value); setError(null); }} required/>
-                        <input type="password" value={password} onChange={e => { setPassword(e.target.value); setError(null); }} required/>
-                        <Button type="submit" variant="primary">Login</Button>
-                    </form>
+                    <img src="/images/logo.png" alt="Movie Tracker Logo" className={styles.logo}/>
+                </Col>
+            </Row>
+            <Row>
+                <Col className="d-flex justify-content-center">
+                    <Form onSubmit={handleSubmit} className="d-flex flex-column text-center">
+                        <Form.Group className="mb-3">
+                            <Form.Label htmlFor="username" hidden>Username</Form.Label>
+                            <Form.Control type="text" id="username" value={username} placeholder="Username" onChange={e => { setUsername(e.target.value); setError(null); }}  required />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label htmlFor="password" hidden>Password</Form.Label>
+                            <Form.Control type="password" name="password" id="password" value={password} placeholder="Password" onChange={e => { setPassword(e.target.value); setError(null); }}  required />
+                        </Form.Group>
+                        <Button type="submit" className={styles.loginButton}>Login</Button>
+                    </Form>
                 </Col>
             </Row>
             
