@@ -1,14 +1,16 @@
 "use client"
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useAuth } from "../useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getPopularMovies } from "../lib/tmdb";
+import MovieCard from "../components/moviecard/MovieCard";
 
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const [imdbData, setImdbData] = useState<any[]>([]);
 
     // User auth
     useEffect(() => {
@@ -24,7 +26,8 @@ const DashboardPage = () => {
             const loadMovies = async () => {
                 try {
                     const response = await getPopularMovies();
-                    console.log(response.data);
+                    setImdbData(response.data.results);
+                    console.log(response.data.results);
                 } catch (err) {
                     console.error(err);
                 }
@@ -41,6 +44,13 @@ const DashboardPage = () => {
             <Row>
                 <Col>
                     <h1>Dashboard</h1>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    {imdbData.map((movie) => (
+                        <MovieCard key={movie.id} movie={movie} />
+                    ))}
                 </Col>
             </Row>
         </Container>
