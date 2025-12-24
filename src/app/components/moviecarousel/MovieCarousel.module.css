@@ -18,32 +18,32 @@
 
 .carouselInner {
     display: flex;
-    gap: 16px;
     user-select: none;
-    padding: 0 16px; /* allow first/last cards to center */
+    padding: 10px 10px;
 }
 
 .focused {
     transform: scale(1.1);
     z-index: 2;
-    border: 2px solid white;
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
     transition: transform 0.3s ease, border 0.3s ease;
 }
 
 .falseCard {
     height: auto;
-    min-width: 300;
-    width: 300;
+    min-width: 250;
+    width: 250;
 }
 
 @media (max-width: 768px) {
     .falseCard {
-        min-width: 120;
-        width: 120px;
+        min-width: 110;
+        width: 110px;
         height: auto;
     }
     .carouselOuter {
         padding-top: 10px;
         padding-bottom: 10px;
+        touch-action: none;
     }
 }

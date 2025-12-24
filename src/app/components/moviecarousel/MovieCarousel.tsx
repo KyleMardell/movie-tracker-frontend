@@ -17,11 +17,11 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const isDragging = useRef(false);
     const [focusedIndex, setFocusedIndex] = useState<number>(0);
-    const [cardWidth, setCardWidth] = useState<number>(300);
+    const [cardWidth, setCardWidth] = useState<number>(250);
 
     // Update card width on resize
     useEffect(() => {
-        const updateCardWidth = () => setCardWidth(window.innerWidth <= 768 ? 136 : 316);
+        const updateCardWidth = () => setCardWidth(window.innerWidth <= 768 ? 110 : 250);
         updateCardWidth();
         window.addEventListener("resize", updateCardWidth);
         return () => window.removeEventListener("resize", updateCardWidth);
@@ -67,7 +67,8 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
         if (!outerRef.current) return;
 
         const outerWidth = outerRef.current.clientWidth;
-        const falseCardsStart = 2;
+        let falseCardsStart = 2;
+        if (cardWidth <= 150) falseCardsStart = 1;
 
         // adjust scrollLeft to account for false cards at start
         const centerIndex = Math.round(
@@ -99,7 +100,7 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
             onTouchEnd={stopDrag}
         >
             <div className={styles.carouselInner}>
-                <div className={styles.falseCard}></div>
+                {cardWidth >= 150 ? <div className={styles.falseCard}></div> : <></>}
                 <div className={styles.falseCard}></div>
                 {movies.map((movie, index) => (
                     <MovieCard
@@ -109,7 +110,7 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
                     />
                 ))}
                 <div className={styles.falseCard}></div>
-                <div className={styles.falseCard}></div>
+                {cardWidth >= 150 ? <div className={styles.falseCard}></div> : <></>}
             </div>
         </div>
     );

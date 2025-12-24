@@ -2,6 +2,12 @@
     height: auto;
     min-width: 300;
     width: 300;
+    margin-left: -50px;
+    background-color: black;
+}
+
+.movieCard:first-child {
+    margin-left: 0;
 }
 
 @media (max-width: 768px) {
@@ -9,5 +15,6 @@
         min-width: 120;
         width: 120px;
         height: auto;
+        margin-left: -10px;
     }
 }
