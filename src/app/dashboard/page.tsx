@@ -5,7 +5,7 @@ import { useAuth } from "../useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getPopularMovies } from "../lib/tmdb";
-import MovieCard from "../components/moviecard/MovieCard";
+import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
@@ -48,9 +48,7 @@ const DashboardPage = () => {
             </Row>
             <Row>
                 <Col>
-                    {imdbData.map((movie) => (
-                        <MovieCard key={movie.id} movie={movie} />
-                    ))}
+                    <MovieCarousel movies={imdbData} />
                 </Col>
             </Row>
         </Container>

@@ -1,0 +1,49 @@
+.carouselOuter {
+    width: 100%;
+    overflow-x: auto;
+    cursor: grab;
+    -ms-overflow-style: none;  /* hide scrollbar in IE/Edge */
+    scrollbar-width: none;     /* hide scrollbar in Firefox */
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.carouselOuter::-webkit-scrollbar {
+    display: none;             /* hide scrollbar in Chrome/Safari */
+}
+
+.carouselOuter:active {
+    cursor: grabbing;
+}
+
+.carouselInner {
+    display: flex;
+    gap: 16px;
+    user-select: none;
+    padding: 0 16px; /* allow first/last cards to center */
+}
+
+.focused {
+    transform: scale(1.1);
+    z-index: 2;
+    border: 2px solid white;
+    transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.falseCard {
+    height: auto;
+    min-width: 300;
+    width: 300;
+}
+
+@media (max-width: 768px) {
+    .falseCard {
+        min-width: 120;
+        width: 120px;
+        height: auto;
+    }
+    .carouselOuter {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}

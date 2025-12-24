@@ -6,9 +6,9 @@ type Movie = {
     poster_path: string;
 };
 
-const MovieCard = ({ movie }: { movie: Movie }) => {
+const MovieCard = ({ movie, className }: { movie: Movie; className?: string }) => {
     return (
-        <Card className={styles.movieCard}>
+        <Card className={`${styles.movieCard} ${className}`}>
             <Card.Img
                 variant="top"
                 src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
