@@ -11,6 +11,8 @@ const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
     const [imdbData, setImdbData] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [pageLoading, setPageLoading] = useState(false);
 
     // User auth
     useEffect(() => {
@@ -24,17 +26,21 @@ const DashboardPage = () => {
     useEffect(() => {
         if (!isLoading && user) {
             const loadMovies = async () => {
+                setPageLoading(true);
                 try {
-                    const response = await getPopularMovies();
-                    setImdbData(response.data.results);
-                    console.log(response.data.results);
+                    const response = await getPopularMovies(page);
+                    if (response.data.results.length === 0) return; // no more results
+                    setImdbData(prev => [...prev, ...response.data.results]);
+                    console.log(response.data);
                 } catch (err) {
                     console.error(err);
+                } finally {
+                    setPageLoading(false);
                 }
             };
             loadMovies();
         }
-    }, [user, isLoading]);
+    }, [user, isLoading, page]);
 
     if (isLoading) return null; // or a spinner later
     if (!user) return null;
@@ -48,7 +54,14 @@ const DashboardPage = () => {
             </Row>
             <Row>
                 <Col>
-                    <MovieCarousel movies={imdbData} />
+                    <MovieCarousel
+                        movies={imdbData}
+                        onReachEnd={() => {
+                            if (!pageLoading) {
+                                setPage(prev => prev + 1);
+                            }
+                        }}
+                    />
                 </Col>
             </Row>
         </Container>

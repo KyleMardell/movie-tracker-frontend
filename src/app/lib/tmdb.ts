@@ -15,7 +15,7 @@ tmdbApi.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-export const getPopularMovies = async (page = 1) => {
+export const getPopularMovies = async (page:number) => {
     return tmdbApi.get("/movie/popular", {
         params: {
             language: "en-US",

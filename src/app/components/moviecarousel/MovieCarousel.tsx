@@ -12,7 +12,7 @@ type Movie = {
 
 type Movies = Movie[];
 
-const MovieCarousel = ({ movies }: { movies: Movies }) => {
+const MovieCarousel = ({ movies, onReachEnd }: { movies: Movies; onReachEnd?: () => void; }) => {
     const [dragStart, setDragStart] = useState<number | null>(null);
     const outerRef = useRef<HTMLDivElement>(null);
     const isDragging = useRef(false);
@@ -50,6 +50,7 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
         const diff = currentX - dragStart;
         outerRef.current.scrollLeft -= diff;
         setDragStart(currentX);
+        handleNearEnd();
     };
 
     const onMouseMove = (e: React.MouseEvent) => {
@@ -85,6 +86,16 @@ const MovieCarousel = ({ movies }: { movies: Movies }) => {
 
         isDragging.current = false;
         setDragStart(null);
+    };
+
+    const handleNearEnd = () => {
+        if (!outerRef.current) return;
+
+        const { scrollLeft, clientWidth, scrollWidth } = outerRef.current;
+
+        if (scrollLeft + clientWidth >= scrollWidth - cardWidth * 2) {
+            onReachEnd?.();
+        }
     };
 
     return (
