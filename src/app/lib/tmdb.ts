@@ -23,3 +23,20 @@ export const getPopularMovies = async (page:number) => {
         },
     });
 };
+
+export const getTrendingMovies = async () => {
+    return tmdbApi.get("/trending/movie/day", {
+        params: {
+            language: "en-US",
+        },
+    });
+};
+
+export const getTopRatedMovies = async(page:number) => {
+    return tmdbApi.get("/movie/top_rated", {
+        params: {
+            language: "en-US",
+            page,
+        },
+    });
+};
