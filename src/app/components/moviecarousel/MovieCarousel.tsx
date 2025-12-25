@@ -13,7 +13,14 @@ type Movie = {
 
 type Movies = Movie[];
 
-const MovieCarousel = ({ movies, onReachEnd, onMovieClick }: { movies: Movies; onReachEnd?: () => void; onMovieClick: (movie: Movie) => void; }) => {
+type MovieCarouselProps = {
+    movies: Movies;
+    onReachEnd?: () => void;
+    onMovieClick: (movie: Movie) => void;
+    listName: string;
+}
+
+const MovieCarousel = ({ movies, onReachEnd, onMovieClick, listName }: MovieCarouselProps) => {
     const [cardWidth, setCardWidth] = useState(250);
 
     useEffect(() => {
@@ -41,7 +48,7 @@ const MovieCarousel = ({ movies, onReachEnd, onMovieClick }: { movies: Movies; o
 
                 {movies.map((movie, index) => (
                     <MovieCard
-                        key={movie.id}
+                        key={`${listName}-${movie.id}`}
                         movie={movie}
                         onClick={index == focusedIndex ? onMovieClick : () => {}}
                         className={index === focusedIndex ? styles.focused : ""}

@@ -3,7 +3,7 @@
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { useAuth } from "../useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/tmdb";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
@@ -11,6 +11,9 @@ import MovieModal from "../components/moviemodal/MovieModal";
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const mountedPopular = useRef(false);
+    const mountedTrending = useRef(false);
+    const mountedRated = useRef(false);
 
     const [imdbData, setImdbData] = useState<any[]>([]);
     const [trendingData, setTrendingData] = useState<any[]>([]);
@@ -34,7 +37,7 @@ const DashboardPage = () => {
 
     // TMDB API
     useEffect(() => {
-        if (!isLoading && user) {
+        if (!mountedPopular.current && !isLoading && user) {
             const loadMovies = async () => {
                 setPageLoading(true);
                 try {
@@ -48,12 +51,13 @@ const DashboardPage = () => {
                     setPageLoading(false);
                 }
             };
+            mountedPopular.current = true;
             loadMovies();
         }
     }, [user, isLoading, page]);
 
     useEffect(() => {
-        if (!isLoading && user) {
+        if (!mountedTrending.current && !isLoading && user) {
             const loadMovies = async () => {
                 setPageLoading(true);
                 try {
@@ -66,12 +70,13 @@ const DashboardPage = () => {
                     setPageLoading(false);
                 }
             };
+            mountedTrending.current = true;
             loadMovies();
         }
     }, [user, isLoading]);
 
     useEffect(() => {
-        if (!isLoading && user) {
+        if (!mountedRated.current && !isLoading && user) {
             const loadMovies = async () => {
                 setRatedPageLoading(true);
                 try {
@@ -85,6 +90,7 @@ const DashboardPage = () => {
                     setRatedPageLoading(false);
                 }
             };
+            mountedRated.current = true;
             loadMovies();
         }
     }, [user, isLoading, ratedPage]);
@@ -93,6 +99,11 @@ const DashboardPage = () => {
         setSelectedMovie(movie);
         setModalShow(true);
     };
+
+    const resetModalState = () => {
+        setModalShow(false);
+        setSelectedMovie(null);
+    }
 
     if (isLoading) return null; // or a spinner later
     if (!user) return null;
@@ -115,6 +126,7 @@ const DashboardPage = () => {
                             }
                         }}
                         onMovieClick={handleMovieClick}
+                        listName="popular"
                     />
                 </Col>
             </Row>
@@ -129,6 +141,7 @@ const DashboardPage = () => {
                             }
                         }}
                         onMovieClick={handleMovieClick}
+                        listName="toprated"
                     />
                 </Col>
             </Row>
@@ -139,12 +152,13 @@ const DashboardPage = () => {
                         movies={trendingData}
                         onReachEnd={() => { }}
                         onMovieClick={handleMovieClick}
+                        listName="trending"
                     />
                 </Col>
             </Row>
             <MovieModal
                 show={modalShow}
-                onHide={() => setModalShow(false)}
+                onHide={resetModalState}
                 movie={selectedMovie}
             />
         </Container>
