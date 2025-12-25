@@ -13,13 +13,7 @@ type Movie = {
 
 type Movies = Movie[];
 
-const MovieCarousel = ({
-    movies,
-    onReachEnd,
-}: {
-    movies: Movies;
-    onReachEnd?: () => void;
-}) => {
+const MovieCarousel = ({ movies, onReachEnd, onMovieClick }: { movies: Movies; onReachEnd?: () => void; onMovieClick: (movie: Movie) => void; }) => {
     const [cardWidth, setCardWidth] = useState(250);
 
     useEffect(() => {
@@ -49,6 +43,7 @@ const MovieCarousel = ({
                     <MovieCard
                         key={movie.id}
                         movie={movie}
+                        onClick={index == focusedIndex ? onMovieClick : () => {}}
                         className={index === focusedIndex ? styles.focused : ""}
                     />
                 ))}

@@ -6,17 +6,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/tmdb";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
+import MovieModal from "../components/moviemodal/MovieModal";
 
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+
     const [imdbData, setImdbData] = useState<any[]>([]);
     const [trendingData, setTrendingData] = useState<any[]>([]);
     const [ratedData, setRatedData] = useState<any[]>([]);
+
     const [page, setPage] = useState(1);
     const [ratedPage, setRatedPage] = useState(1);
     const [pageLoading, setPageLoading] = useState(false);
     const [ratedPageLoading, setRatedPageLoading] = useState(false);
+
+    const [modalShow, setModalShow] = useState(false);
+    const [selectedMovie, setSelectedMovie] = useState<any | null>(null);
 
     // User auth
     useEffect(() => {
@@ -83,6 +89,11 @@ const DashboardPage = () => {
         }
     }, [user, isLoading, ratedPage]);
 
+    const handleMovieClick = (movie: any) => {
+        setSelectedMovie(movie);
+        setModalShow(true);
+    };
+
     if (isLoading) return null; // or a spinner later
     if (!user) return null;
 
@@ -103,6 +114,7 @@ const DashboardPage = () => {
                                 setPage(prev => prev + 1);
                             }
                         }}
+                        onMovieClick={handleMovieClick}
                     />
                 </Col>
             </Row>
@@ -116,6 +128,7 @@ const DashboardPage = () => {
                                 setRatedPage(prev => prev + 1);
                             }
                         }}
+                        onMovieClick={handleMovieClick}
                     />
                 </Col>
             </Row>
@@ -125,9 +138,15 @@ const DashboardPage = () => {
                     <MovieCarousel
                         movies={trendingData}
                         onReachEnd={() => { }}
+                        onMovieClick={handleMovieClick}
                     />
                 </Col>
             </Row>
+            <MovieModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                movie={selectedMovie}
+            />
         </Container>
     );
 };
