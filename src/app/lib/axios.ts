@@ -56,7 +56,11 @@ api.interceptors.response.use(
                 );
 
                 // Update header and retry original request
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+                originalRequest.headers = {
+                    ...originalRequest.headers,
+                    Authorization: `Bearer ${newAccessToken}`,
+                };
                 return api(originalRequest);
             } catch (refreshError) {
                 // Refresh failed → log out

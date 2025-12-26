@@ -1,6 +1,16 @@
+"use client"
+
+import { addMovie } from "@/app/lib/api";
 import { getMovieDetail } from "@/app/lib/tmdb";
 import { useEffect, useState } from "react";
 import { Modal, Button, Image } from "react-bootstrap";
+
+type MovieToAdd = {
+    title: string;
+    tmdb_id: number;
+    image_path: string;
+    watched: boolean;
+}
 
 
 const MovieModal = (props: any) => {
@@ -29,6 +39,24 @@ const MovieModal = (props: any) => {
         loadMovieDetail();
     }, [movie]);
 
+    const handleAddToList = async () => {
+        if (!movie) return;
+
+        const movieToAdd: MovieToAdd = {
+            title: movie.title,
+            tmdb_id: movie.id,
+            image_path: movie.poster_path,
+            watched: false,
+        };
+
+        try {
+            const response = await addMovie(movieToAdd);
+            console.log(response);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <Modal
@@ -50,6 +78,7 @@ const MovieModal = (props: any) => {
                 </p>
             </Modal.Body>
             <Modal.Footer>
+                <Button onClick={handleAddToList}>Add to List</Button>
             </Modal.Footer>
         </Modal>
     )
