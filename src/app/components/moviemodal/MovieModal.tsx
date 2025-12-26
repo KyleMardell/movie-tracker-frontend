@@ -1,8 +1,35 @@
+import { getMovieDetail } from "@/app/lib/tmdb";
+import { useEffect, useState } from "react";
 import { Modal, Button, Image } from "react-bootstrap";
 
 
 const MovieModal = (props: any) => {
     const { movie } = props;
+    const id = movie?.id;
+    const [movieDetail, setMovieDetail] = useState<any | null>(null);
+    const [loadingDetail, setLoadingDetail] = useState(false);
+
+    useEffect(() => {
+        if (!movie?.id) {
+            setMovieDetail(null);
+            return;
+        }
+
+        const loadMovieDetail = async () => {
+            setLoadingDetail(true);
+            try {
+                const response = await getMovieDetail(movie.id);
+                setMovieDetail(response.data);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoadingDetail(false);
+            }
+        };
+        loadMovieDetail();
+    }, [movie]);
+
+
     return (
         <Modal
             {...props}
@@ -12,18 +39,17 @@ const MovieModal = (props: any) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id={`${movie?.title} details`}>
-                    {movie?.title || "No movie selected"} <br />Released - {movie?.release_date}
+                    {movieDetail?.title || "No movie selected"} <br />Released - {movieDetail?.release_date}
                 </Modal.Title>
 
             </Modal.Header>
             <Modal.Body>
-                <Image src={`https://image.tmdb.org/t/p/w500/${movie?.poster_path}`} fluid />
+                <Image src={`https://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`} fluid />
                 <p>
-                    {movie?.overview || "No movie selected"}
+                    {movieDetail?.overview || "No movie selected"}
                 </p>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>
         </Modal>
     )

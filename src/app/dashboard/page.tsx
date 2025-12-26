@@ -1,6 +1,6 @@
 "use client"
 
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { useAuth } from "../useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
@@ -11,6 +11,7 @@ import MovieModal from "../components/moviemodal/MovieModal";
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+
     const mountedPopular = useRef(false);
     const mountedTrending = useRef(false);
     const mountedRated = useRef(false);
@@ -34,66 +35,95 @@ const DashboardPage = () => {
         }
     }, [user, isLoading]);
 
-
-    // TMDB API
     useEffect(() => {
         if (!mountedPopular.current && !isLoading && user) {
-            const loadMovies = async () => {
-                setPageLoading(true);
-                try {
-                    const response = await getPopularMovies(page);
-                    if (response.data.results.length === 0) return; // no more results
-                    setImdbData(prev => [...prev, ...response.data.results]);
-                    console.log(response.data);
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    setPageLoading(false);
-                }
-            };
             mountedPopular.current = true;
-            loadMovies();
-        }
-    }, [user, isLoading, page]);
-
-    useEffect(() => {
-        if (!mountedTrending.current && !isLoading && user) {
-            const loadMovies = async () => {
+            const loadInitial = async () => {
                 setPageLoading(true);
                 try {
-                    const response = await getTrendingMovies();
-                    setTrendingData(response.data.results);
-                    console.log(response.data);
+                    const response = await getPopularMovies(1);
+                    setImdbData(response.data.results);
                 } catch (err) {
                     console.error(err);
                 } finally {
                     setPageLoading(false);
                 }
             };
-            mountedTrending.current = true;
-            loadMovies();
+            loadInitial();
         }
     }, [user, isLoading]);
 
     useEffect(() => {
+        if (page === 1) return; // skip initial page
+        if (!isLoading && user) {
+            const loadPage = async () => {
+                setPageLoading(true);
+                try {
+                    const response = await getPopularMovies(page);
+                    setImdbData(prev => [...prev, ...response.data.results]);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setPageLoading(false);
+                }
+            };
+            loadPage();
+        }
+    }, [page, user, isLoading]);
+
+    useEffect(() => {
         if (!mountedRated.current && !isLoading && user) {
-            const loadMovies = async () => {
+            mountedRated.current = true;
+            const loadInitial = async () => {
                 setRatedPageLoading(true);
                 try {
-                    const response = await getTopRatedMovies(ratedPage);
-                    if (response.data.results.length === 0) return; // no more results
-                    setRatedData(prev => [...prev, ...response.data.results]);
-                    console.log(response.data);
+                    const response = await getTopRatedMovies(1);
+                    setRatedData(response.data.results);
                 } catch (err) {
                     console.error(err);
                 } finally {
                     setRatedPageLoading(false);
                 }
             };
-            mountedRated.current = true;
-            loadMovies();
+            loadInitial();
         }
-    }, [user, isLoading, ratedPage]);
+    }, [user, isLoading]);
+
+    useEffect(() => {
+        if (ratedPage === 1) return; // skip initial page
+        if (!isLoading && user) {
+            const loadPage = async () => {
+                setRatedPageLoading(true);
+                try {
+                    const response = await getTopRatedMovies(ratedPage);
+                    setRatedData(prev => [...prev, ...response.data.results]);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setRatedPageLoading(false);
+                }
+            };
+            loadPage();
+        }
+    }, [ratedPage, user, isLoading]);
+
+    useEffect(() => {
+        if (!mountedTrending.current && !isLoading && user) {
+            mountedTrending.current = true;
+            const loadTrending = async () => {
+                setPageLoading(true);
+                try {
+                    const response = await getTrendingMovies();
+                    setTrendingData(response.data.results);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setPageLoading(false);
+                }
+            };
+            loadTrending();
+        }
+    }, [user, isLoading]);
 
     const handleMovieClick = (movie: any) => {
         setSelectedMovie(movie);
@@ -103,9 +133,9 @@ const DashboardPage = () => {
     const resetModalState = () => {
         setModalShow(false);
         setSelectedMovie(null);
-    }
+    };
 
-    if (isLoading) return null; // or a spinner later
+    if (isLoading) return null;
     if (!user) return null;
 
     return (
@@ -121,9 +151,7 @@ const DashboardPage = () => {
                     <MovieCarousel
                         movies={imdbData}
                         onReachEnd={() => {
-                            if (!pageLoading) {
-                                setPage(prev => prev + 1);
-                            }
+                            if (!pageLoading) setPage(prev => prev + 1);
                         }}
                         onMovieClick={handleMovieClick}
                         listName="popular"
@@ -136,9 +164,7 @@ const DashboardPage = () => {
                     <MovieCarousel
                         movies={ratedData}
                         onReachEnd={() => {
-                            if (!ratedPageLoading) {
-                                setRatedPage(prev => prev + 1);
-                            }
+                            if (!ratedPageLoading) setRatedPage(prev => prev + 1);
                         }}
                         onMovieClick={handleMovieClick}
                         listName="toprated"

@@ -32,11 +32,19 @@ export const getTrendingMovies = async () => {
     });
 };
 
-export const getTopRatedMovies = async(page:number) => {
+export const getTopRatedMovies = async (page:number) => {
     return tmdbApi.get("/movie/top_rated", {
         params: {
             language: "en-US",
             page,
+        },
+    });
+};
+
+export const getMovieDetail = async (id:number) => {
+    return tmdbApi.get(`/movie/${id}`, {
+        params: {
+            language: "en-US",
         },
     });
 };
