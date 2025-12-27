@@ -1,9 +1,10 @@
 "use client"
 
-import { addMovie } from "@/app/lib/api";
+import { addMovie, deleteMovie } from "@/app/lib/api";
 import { getMovieDetail } from "@/app/lib/tmdb";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Modal, Button, Image } from "react-bootstrap";
+import { UserMoviesContext } from "@/app/context/UserMoviesContext";
 
 type MovieToAdd = {
     title: string;
@@ -18,6 +19,12 @@ const MovieModal = (props: any) => {
     const id = movie?.tmdb_id ?? movie?.id;
     const [movieDetail, setMovieDetail] = useState<any | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
+
+    const context = useContext(UserMoviesContext);
+    if (!context) return null;
+    const { userMovies, setUserMovies } = context;
+    const [movieIsInList, setMovieIsInList] = useState(false);
+    const [addedMovieID, setAddedMovieID] = useState(null);
 
     useEffect(() => {
         if (!movie?.id) {
@@ -39,6 +46,19 @@ const MovieModal = (props: any) => {
         loadMovieDetail();
     }, [movie]);
 
+    useEffect(() => {
+        if (userMovies && movieDetail) {
+            const foundMovie = userMovies.find((m) => m.tmdb_id === movieDetail.id);
+            if (foundMovie) {
+                setMovieIsInList(true);
+                setAddedMovieID(foundMovie.id); // <-- custom API ID
+            } else {
+                setMovieIsInList(false);
+                setAddedMovieID(null);
+            }
+        }
+    }, [userMovies, movieDetail]);
+
     const handleAddToList = async () => {
         if (!movie) return;
 
@@ -51,9 +71,28 @@ const MovieModal = (props: any) => {
 
         try {
             const response = await addMovie(movieToAdd);
-            console.log(response);
+            if (response.status == 201) {
+                setMovieIsInList(true);
+            }
+            console.log(response); // Change to confirmation feedback
         } catch (err) {
             console.log(err);
+        }
+    };
+
+    const handleDeleteFromList = async () => {
+        if (addedMovieID) {
+            try {
+                const response = await deleteMovie(addedMovieID);
+                console.log(response);
+                if (response.status == 204) {
+                    setMovieIsInList(false);
+                    setUserMovies(prev => prev.filter(m => m.id !== addedMovieID));
+                    setAddedMovieID(null);
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
     };
 
@@ -78,7 +117,9 @@ const MovieModal = (props: any) => {
                 </p>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleAddToList}>Add to List</Button>
+                {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}
+
+                {movie?.watched ? <Button>Un-Watch</Button> : <Button>Watched</Button>}
             </Modal.Footer>
         </Modal>
     )
