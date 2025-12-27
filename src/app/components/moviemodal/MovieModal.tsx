@@ -72,6 +72,7 @@ const MovieModal = (props: any) => {
         try {
             const response = await addMovie(movieToAdd);
             if (response.status == 201) {
+                setUserMovies(prev => [...prev, response.data]);
                 setMovieIsInList(true);
             }
             console.log(response); // Change to confirmation feedback
@@ -96,6 +97,12 @@ const MovieModal = (props: any) => {
         }
     };
 
+    const resetModalState = () => {
+        setMovieDetail(null);
+        setMovieIsInList(false);
+        setAddedMovieID(null);
+    };
+
 
     return (
         <Modal
@@ -103,6 +110,10 @@ const MovieModal = (props: any) => {
             size="lg"
             aria-labelledby={`${movie?.title} details`}
             centered
+            onHide={() => {
+                resetModalState();
+                props.onHide?.();
+            }}
         >
             <Modal.Header closeButton>
                 <Modal.Title id={`${movie?.title} details`}>
@@ -119,7 +130,7 @@ const MovieModal = (props: any) => {
             <Modal.Footer>
                 {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}
 
-                {movie?.watched ? <Button>Un-Watch</Button> : <Button>Watched</Button>}
+                {movieIsInList ? <Button>Mark as Watched</Button> : <></>}
             </Modal.Footer>
         </Modal>
     )
