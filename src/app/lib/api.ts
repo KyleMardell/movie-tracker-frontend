@@ -35,3 +35,9 @@ export const addMovie = async (movie: Movie) => {
     const response = await api.post('/api/movies/',  movie);
     return response.data;
 };
+
+// Get users Movie list
+export const getMovies = async () => {
+    const response = await api.get('/api/movies/');
+    return response.data;
+}

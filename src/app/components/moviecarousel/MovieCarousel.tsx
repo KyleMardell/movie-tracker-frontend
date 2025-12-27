@@ -9,6 +9,7 @@ type Movie = {
     id: number;
     title: string;
     poster_path: string;
+    image_path: string;
 };
 
 type Movies = Movie[];

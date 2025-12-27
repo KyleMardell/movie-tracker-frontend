@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "./providers";
 import "bootstrap/dist/css/bootstrap.min.css"
 import NavBar from "./components/nav/NavBar";
+import { UserMoviesProvider } from "./context/UserMoviesContext";
 
 
 const geistSans = Geist({
@@ -30,8 +31,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <NavBar />
-          {children}
+          <UserMoviesProvider>
+            <NavBar />
+            {children}
+          </UserMoviesProvider>
         </AuthProvider>
       </body>
     </html>

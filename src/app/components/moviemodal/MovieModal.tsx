@@ -15,7 +15,7 @@ type MovieToAdd = {
 
 const MovieModal = (props: any) => {
     const { movie } = props;
-    const id = movie?.id;
+    const id = movie?.tmdb_id ?? movie?.id;
     const [movieDetail, setMovieDetail] = useState<any | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
 
@@ -28,7 +28,7 @@ const MovieModal = (props: any) => {
         const loadMovieDetail = async () => {
             setLoadingDetail(true);
             try {
-                const response = await getMovieDetail(movie.id);
+                const response = await getMovieDetail(id);
                 setMovieDetail(response.data);
             } catch (err) {
                 console.log(err);
