@@ -1,6 +1,8 @@
 "use client"
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../useAuth";
 import { UserMoviesContext } from "../context/UserMoviesContext";
 import { Col, Container, Row } from "react-bootstrap";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
@@ -8,10 +10,19 @@ import MovieModal from "../components/moviemodal/MovieModal";
 
 
 const UserMoviesPage = () => {
+    const { user, isLoading } = useAuth();
+    const router = useRouter();
 
     const context = useContext(UserMoviesContext);
     const [modalShow, setModalShow] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<any | null>(null);
+
+    // User auth
+    useEffect(() => {
+        if (!isLoading && !user) {
+            router.push("/login");
+        }
+    }, [user, isLoading]);
 
     if (!context) return null; // No context, add error message later
 
