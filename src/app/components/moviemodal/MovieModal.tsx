@@ -25,6 +25,7 @@ const MovieModal = (props: any) => {
     const { userMovies, setUserMovies } = context;
     const [movieIsInList, setMovieIsInList] = useState(false);
     const [addedMovieID, setAddedMovieID] = useState(null);
+    const [isWatched, setIsWatched] = useState(false);
 
     useEffect(() => {
         if (!movie?.id) {
@@ -51,7 +52,8 @@ const MovieModal = (props: any) => {
             const foundMovie = userMovies.find((m) => m.tmdb_id === movieDetail.id);
             if (foundMovie) {
                 setMovieIsInList(true);
-                setAddedMovieID(foundMovie.id); // <-- custom API ID
+                setAddedMovieID(foundMovie.id); // custom API ID
+                setIsWatched(foundMovie.watched);
             } else {
                 setMovieIsInList(false);
                 setAddedMovieID(null);
@@ -88,7 +90,7 @@ const MovieModal = (props: any) => {
                 console.log(response); // Change to confirmation feedback
                 if (response.status == 204) {
                     setMovieIsInList(false);
-                    setUserMovies(prev => prev.filter(m => m.id !== addedMovieID));
+                    setUserMovies(prev => prev.filter(mov => mov.id !== addedMovieID));
                     setAddedMovieID(null);
                 }
             } catch (err) {
@@ -98,20 +100,29 @@ const MovieModal = (props: any) => {
     };
 
     const handleUpdateWatched = async () => {
-        if (!addedMovieID) return; 
-            try {
-                const response = await updateWatchedMovie(addedMovieID);
-                console.log(response);
-            } catch (err) {
-                console.log(err);
+        if (!addedMovieID) return;
+        try {
+            const response = await updateWatchedMovie(addedMovieID);
+            if (response.status === 200) {
+                setUserMovies(prev =>
+                    prev.map(mov =>
+                        mov.id === addedMovieID
+                            ? { ...mov, watched: !mov.watched }
+                            : mov
+                    )
+                );
             }
-        
+        } catch (err) {
+            console.log(err);
+        }
+
     };
 
     const resetModalState = () => {
         setMovieDetail(null);
         setMovieIsInList(false);
         setAddedMovieID(null);
+        setIsWatched(false);
     };
 
 
@@ -141,7 +152,7 @@ const MovieModal = (props: any) => {
             <Modal.Footer>
                 {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}
 
-                {movieIsInList ? <Button onClick={handleUpdateWatched}>Mark as Watched</Button> : <></>}
+                {movieIsInList ? <Button onClick={handleUpdateWatched}>{isWatched ? "Mark as Unwatched" : "Mark as Watched"}</Button> : <></>}
             </Modal.Footer>
         </Modal>
     )

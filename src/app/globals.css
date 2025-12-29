@@ -30,7 +30,6 @@ a {
 
 a,
 button,
-input,
 textarea,
 select {
     color: var(--foreground) !important;

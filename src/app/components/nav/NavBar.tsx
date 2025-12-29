@@ -37,7 +37,8 @@ const NavBar = () => {
                             <Nav.Link onClick={() => {handleShowLogout(); setExpanded(false);}}>Log Out</Nav.Link>
                             </> :
                             <>
-                            <Nav.Link as={Link} href="/" onClick={() => setExpanded(false)}>Home</Nav.Link>
+                            <Nav.Link as={Link} href="/" onClick={() => setExpanded(false)}>Home / Log In</Nav.Link>
+                            <Nav.Link as={Link} href="/signup" onClick={() => setExpanded(false)}>Sign Up</Nav.Link>
                             </>
                         }
                     </Nav>

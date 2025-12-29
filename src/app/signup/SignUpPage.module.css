@@ -1,0 +1,10 @@
+.logo {
+    width: auto;
+    height: 250px;
+    display: block;
+    margin: 0 auto;
+}
+
+.signupButton {
+    background-color: #966AE8;
+}
