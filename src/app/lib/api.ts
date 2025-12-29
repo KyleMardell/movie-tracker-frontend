@@ -44,6 +44,12 @@ export const getMovies = async () => {
 
 // Delete Movie from users list
 export const deleteMovie = async (id: Movie) => {
-    const response = await api.delete(`/api/movies/${id}`);
+    const response = await api.delete(`/api/movies/${id}/`);
     return response;
 };
+
+// Update Movie watched status
+export const updateWatchedMovie = async (id: number) => {
+    const response = await api.put(`/api/movies/${id}/toggle-watched/`)
+    return response;
+}

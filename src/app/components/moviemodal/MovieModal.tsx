@@ -1,6 +1,6 @@
 "use client"
 
-import { addMovie, deleteMovie } from "@/app/lib/api";
+import { addMovie, deleteMovie, updateWatchedMovie } from "@/app/lib/api";
 import { getMovieDetail } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
 import { Modal, Button, Image } from "react-bootstrap";
@@ -85,7 +85,7 @@ const MovieModal = (props: any) => {
         if (addedMovieID) {
             try {
                 const response = await deleteMovie(addedMovieID);
-                console.log(response);
+                console.log(response); // Change to confirmation feedback
                 if (response.status == 204) {
                     setMovieIsInList(false);
                     setUserMovies(prev => prev.filter(m => m.id !== addedMovieID));
@@ -95,6 +95,17 @@ const MovieModal = (props: any) => {
                 console.log(err);
             }
         }
+    };
+
+    const handleUpdateWatched = async () => {
+        if (!addedMovieID) return; 
+            try {
+                const response = await updateWatchedMovie(addedMovieID);
+                console.log(response);
+            } catch (err) {
+                console.log(err);
+            }
+        
     };
 
     const resetModalState = () => {
@@ -130,7 +141,7 @@ const MovieModal = (props: any) => {
             <Modal.Footer>
                 {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}
 
-                {movieIsInList ? <Button>Mark as Watched</Button> : <></>}
+                {movieIsInList ? <Button onClick={handleUpdateWatched}>Mark as Watched</Button> : <></>}
             </Modal.Footer>
         </Modal>
     )
