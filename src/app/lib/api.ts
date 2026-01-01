@@ -19,10 +19,20 @@ type Movie = {
 }
 
 // Login function
-export const login = (username: string, password: string) => {
+export const login = async (username: string, password: string) => {
     const data: LoginPayload = { username, password };
     return api.post('/api/token/', data);
 }
+
+// Sign Up function
+// CLEAN THIS UP WITH A CORRECT TS TYPE
+export const signUpUser = async (username: string, password: string) => {
+    const response = await api.post("/api/register/", {
+        username,
+        password,
+    });
+    return response;
+};
 
 // Refresh access token function
 export const refreshAccessToken = async (refreshToken: string): Promise<RefreshResponse> => {
@@ -43,7 +53,7 @@ export const getMovies = async () => {
 }
 
 // Delete Movie from users list
-export const deleteMovie = async (id: Movie) => {
+export const deleteMovie = async (id: number) => {
     const response = await api.delete(`/api/movies/${id}/`);
     return response;
 };

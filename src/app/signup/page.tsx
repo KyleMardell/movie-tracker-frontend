@@ -3,6 +3,9 @@
 import { Form, Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./SignUpPage.module.css";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../useAuth";
+import { signUpUser } from "../lib/api";
 
 // Types
 type SignUpFormData = {
@@ -20,11 +23,12 @@ const SignUpPage = () => {
         password2: "",
     });
     const { username, password1, password2 } = signUpData;
-
     const payload: signUpPayload = {
         username,
         password: password1,
     };
+    const { setAuthData, user, isLoading } = useAuth();
+    const router = useRouter();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -38,11 +42,22 @@ const SignUpPage = () => {
         e.preventDefault();
         console.log(username, password1, password2);
         if (password1 === password2) {
-            // try sign up
-            console.log("passwords match");
+            try {
+                const response = await signUpUser(username, password1);
+                console.log("User signed up:", response);
+                const data = {
+                    user: username,
+                    accessToken: response.data.access,
+                    refreshToken: response.data.refresh
+                };
+                setAuthData(data);
+                router.push("/");
+                // ADD SUCCESS MESSAGE UPON SIGN UP
+            } catch (err) {
+                console.error("Signup error:", err);
+            }
         } else {
-            // show warning message
-            console.log("passwords DO NOT match");
+            console.log("Passwords DO NOT match");
         }
     };
 
