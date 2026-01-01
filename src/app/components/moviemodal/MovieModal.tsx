@@ -1,9 +1,9 @@
 "use client"
 
 import { addMovie, deleteMovie, updateWatchedMovie } from "@/app/lib/api";
-import { getMovieDetail } from "@/app/lib/tmdb";
+import { getMovieDetail, getMovieProviders } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
-import { Modal, Button, Image } from "react-bootstrap";
+import { Modal, Button, Image, Row, Col } from "react-bootstrap";
 import { UserMoviesContext } from "@/app/context/UserMoviesContext";
 
 type MovieToAdd = {
@@ -19,6 +19,7 @@ const MovieModal = (props: any) => {
     const id = movie?.tmdb_id ?? movie?.id;
     const [movieDetail, setMovieDetail] = useState<any | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
+    const [movieProviders, setMovieProviders] = useState(null);
 
     const context = useContext(UserMoviesContext);
     if (!context) return null;
@@ -44,7 +45,19 @@ const MovieModal = (props: any) => {
                 setLoadingDetail(false);
             }
         };
+
+        const loadMovieProviders = async () => {
+            try {
+                const response = await getMovieProviders(id);
+                setMovieProviders(response.data.results["GB"] || null);
+                console.log(response.data.results["GB"]);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
         loadMovieDetail();
+        loadMovieProviders();
     }, [movie]);
 
     useEffect(() => {
@@ -144,10 +157,44 @@ const MovieModal = (props: any) => {
 
             </Modal.Header>
             <Modal.Body>
-                <Image src={`https://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`} fluid />
-                <p>
-                    {movieDetail?.overview || "No movie selected"}
-                </p>
+                <Row>
+                    <Col>
+                        <Image src={`https://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`} fluid />
+                        <p>
+                            {movieDetail?.overview || "No movie selected"}
+                        </p>
+                    </Col>
+                </Row>
+                <Row>
+                    <h3>Stream</h3>
+                    <Col className="d-flex">
+                        {movieProviders?.flatrate?.map(provider => (
+                            <div key={provider.provider_id}>
+                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                            </div>
+                        ))}
+                    </Col>
+                </Row>
+                <Row>
+                    <h3>Buy</h3>
+                    <Col className="d-flex">
+                        {movieProviders?.buy?.map(provider => (
+                            <div key={provider.provider_id}>
+                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                            </div>
+                        ))}
+                    </Col>
+                </Row>
+                <Row>
+                    <h3>Rent</h3>
+                    <Col className="d-flex">
+                        {movieProviders?.rent?.map(provider => (
+                            <div key={provider.provider_id}>
+                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                            </div>
+                        ))}
+                    </Col>
+                </Row>
             </Modal.Body>
             <Modal.Footer>
                 {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}

@@ -48,3 +48,7 @@ export const getMovieDetail = async (id:number) => {
         },
     });
 };
+
+export const getMovieProviders = async (id: number) => {
+    return tmdbApi.get(`/movie/${id}/watch/providers`);
+};

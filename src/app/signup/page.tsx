@@ -111,7 +111,6 @@ const SignUpPage = () => {
                     </Form>
                 </Col>
             </Row>
-
         </Container>
     )
 }
