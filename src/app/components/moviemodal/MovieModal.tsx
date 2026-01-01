@@ -6,20 +6,35 @@ import { useEffect, useState, useContext } from "react";
 import { Modal, Button, Image, Row, Col } from "react-bootstrap";
 import { UserMoviesContext } from "@/app/context/UserMoviesContext";
 
+// Types
 type MovieToAdd = {
     title: string;
     tmdb_id: number;
     image_path: string;
     watched: boolean;
-}
+};
 
+type MovieProvider = {
+    logo_path: string;
+    provider_id: number;
+    provider_name: string;
+    display_priority: number;
+};
+
+type CountryProviders = {
+    link: string;
+    flatrate?: MovieProvider[];
+    rent?: MovieProvider[];
+    buy?: MovieProvider[];
+    ads?: MovieProvider[];
+};
 
 const MovieModal = (props: any) => {
     const { movie } = props;
     const id = movie?.tmdb_id ?? movie?.id;
     const [movieDetail, setMovieDetail] = useState<any | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
-    const [movieProviders, setMovieProviders] = useState(null);
+    const [movieProviders, setMovieProviders] = useState<CountryProviders | null>(null);
 
     const context = useContext(UserMoviesContext);
     if (!context) return null;
@@ -50,7 +65,6 @@ const MovieModal = (props: any) => {
             try {
                 const response = await getMovieProviders(id);
                 setMovieProviders(response.data.results["GB"] || null);
-                console.log(response.data.results["GB"]);
             } catch (err) {
                 console.log(err);
             }
@@ -136,6 +150,7 @@ const MovieModal = (props: any) => {
         setMovieIsInList(false);
         setAddedMovieID(null);
         setIsWatched(false);
+        setMovieProviders(null);
     };
 
 
@@ -165,36 +180,59 @@ const MovieModal = (props: any) => {
                         </p>
                     </Col>
                 </Row>
-                <Row>
-                    <h3>Stream</h3>
-                    <Col className="d-flex">
-                        {movieProviders?.flatrate?.map(provider => (
-                            <div key={provider.provider_id}>
-                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
-                            </div>
-                        ))}
-                    </Col>
-                </Row>
-                <Row>
-                    <h3>Buy</h3>
-                    <Col className="d-flex">
-                        {movieProviders?.buy?.map(provider => (
-                            <div key={provider.provider_id}>
-                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
-                            </div>
-                        ))}
-                    </Col>
-                </Row>
-                <Row>
-                    <h3>Rent</h3>
-                    <Col className="d-flex">
-                        {movieProviders?.rent?.map(provider => (
-                            <div key={provider.provider_id}>
-                                <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
-                            </div>
-                        ))}
-                    </Col>
-                </Row>
+                {
+                    movieProviders ?
+                        <>
+                            {
+                                movieProviders?.flatrate ?
+                                    <Row>
+                                        <h3>Stream</h3>
+                                        <Col className="d-flex">
+                                            {movieProviders?.flatrate?.map((provider: MovieProvider) => (
+                                                <div key={provider.provider_id}>
+                                                    <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                                                </div>
+                                            ))}
+                                        </Col>
+                                    </Row>
+                                    :
+                                    <></>
+                            }
+                            {
+                                movieProviders?.buy ?
+                                    <Row>
+                                        <h3>Buy</h3>
+                                        <Col className="d-flex">
+                                            {movieProviders?.buy?.map((provider: MovieProvider) => (
+                                                <div key={provider.provider_id}>
+                                                    <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                                                </div>
+                                            ))}
+                                        </Col>
+                                    </Row>
+                                    :
+                                    <></>
+                            }
+                            {
+                                movieProviders?.rent ?
+                                    <Row>
+                                        <h3>Rent</h3>
+                                        <Col className="d-flex">
+                                            {movieProviders?.rent?.map((provider: MovieProvider) => (
+                                                <div key={provider.provider_id}>
+                                                    <img src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} />
+                                                </div>
+                                            ))}
+                                        </Col>
+                                    </Row>
+                                    :
+                                    <></>
+                            }
+                        </>
+                        :
+                        <p>Not available to stream, rent or buy.</p>
+                }
+
             </Modal.Body>
             <Modal.Footer>
                 {movieIsInList ? <Button onClick={handleDeleteFromList}>Delete</Button> : <Button onClick={handleAddToList}>Add to List</Button>}
