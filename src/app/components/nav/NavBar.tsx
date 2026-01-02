@@ -34,6 +34,7 @@ const NavBar = () => {
                             <>
                             <Nav.Link as={Link} href="/" onClick={() => setExpanded(false)}>Home</Nav.Link>
                             <Nav.Link as={Link} href="/movieslist" onClick={() => setExpanded(false)}>My List</Nav.Link>
+                            <Nav.Link as={Link} href="/search" onClick={() => setExpanded(false)}>Search</Nav.Link>
                             <Nav.Link onClick={() => {handleShowLogout(); setExpanded(false);}}>Log Out</Nav.Link>
                             </> :
                             <>

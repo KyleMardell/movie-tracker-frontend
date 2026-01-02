@@ -42,8 +42,6 @@ const LoginPage = () => {
         }
     }
 
-    
-
     return (
         <Container>
             {
