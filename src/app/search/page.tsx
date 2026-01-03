@@ -9,24 +9,40 @@ import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
 import styles from "./MovieSearchPage.module.css";
 
+// types
+type Movie = {
+    id: number;
+    title: string;
+    poster_path: string;
+    image_path: string;
+};
+
+type Movies = Movie[];
+
+// Search movie page, allows the user to search for a movie
+// displays a list of results
 const MovieSearchPage = () => {
     const router = useRouter();
     const { user, isLoading } = useAuth();
-    const [searchTerm, setSearchTerm] = useState<string | "">("");
     const [error, setError] = useState<string | null>(null);
-    const [showError, setShowError] = useState<boolean | false>(false);
-    const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [resultsPage, setResultsPage] = useState<number>(1)
-    const [resultsLoading, setResultsLoading] = useState(false);
-    const [modalShow, setModalShow] = useState(false);
-    const [selectedMovie, setSelectedMovie] = useState<any | null>(null);
+    const [showError, setShowError] = useState(false);
 
+    const [modalShow, setModalShow] = useState(false);
+    const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+
+    const [searchTerm, setSearchTerm] = useState<string | "">("");
+    const [searchResults, setSearchResults] = useState<Movies | []>([]);
+    const [resultsPage, setResultsPage] = useState(1)
+    const [resultsLoading, setResultsLoading] = useState(false);
+
+    // user auth
     useEffect(() => {
         if (!isLoading && !user) {
             router.push("/login");
         }
     }, [user, isLoading]);
 
+    // send search term to the tmdb api and updates results
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSearchResults([]);
@@ -45,6 +61,7 @@ const MovieSearchPage = () => {
         }
     };
 
+    // pagination loads additional pages when the scroll reaches the current list end
     useEffect(() => {
         if (resultsPage === 1) return;
 
@@ -63,25 +80,29 @@ const MovieSearchPage = () => {
         loadPage();
     }, [resultsPage, searchTerm]);
 
+    // shows the movie modal when a movie is clicked
     const handleMovieClick = (movie: any) => {
         setSelectedMovie(movie);
         setModalShow(true);
     };
 
+    // resets the modal when closed
     const resetModalState = () => {
         setModalShow(false);
         setSelectedMovie(null);
     };
 
+    // renders the search results list
+    // displays a simple search form
     return (
         <Container>
             {
-                showError ?
+                showError && (
                     <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
                         <Alert.Heading>Oh No! You got an error.</Alert.Heading>
                         <p>{error}</p>
                     </Alert>
-                    : <></>
+                )
             }
             <Row>
                 <Col className="d-flex justify-content-center">

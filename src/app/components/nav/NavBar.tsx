@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useClickOutsideToggle from '../../hooks/useClickOutsideToggle';
 
-
+// Nav bar displays different nav options for logged in or out user
 const NavBar = () => {
     const { user } = useAuth();
     const { expanded, setExpanded, ref } = useClickOutsideToggle();
@@ -16,17 +16,21 @@ const NavBar = () => {
     const handleShowLogout = () => setShowLogout(true);
     const router = useRouter()
     const { logout } = useAuth();
+
+    // logs out the user
     const handleLogout = () => {
         logout();
         handleCloseLogout();
         router.push("/");
     };
 
+    // checks for a user in the user context and renders the nav
+    // displays a log out confirmation modal on log out
     return (
         <>
         <Navbar expanded={expanded} ref={ref} expand="lg">
             <Container>
-                <Navbar.Brand as={Link} href="/">Movie Tracker {user ? <> - {user}</> : <></>}</Navbar.Brand>
+                <Navbar.Brand as={Link} href="/">Movie Tracker</Navbar.Brand>
                 <Navbar.Toggle onClick={() => setExpanded(!expanded)} aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto">

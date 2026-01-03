@@ -8,6 +8,16 @@ import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/t
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
 
+// types
+type Movie = {
+    id: number;
+    title: string;
+    poster_path: string;
+    image_path: string;
+};
+
+type Movies = Movie[];
+
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
@@ -16,9 +26,9 @@ const DashboardPage = () => {
     const mountedTrending = useRef(false);
     const mountedRated = useRef(false);
 
-    const [imdbData, setImdbData] = useState<any[]>([]);
-    const [trendingData, setTrendingData] = useState<any[]>([]);
-    const [ratedData, setRatedData] = useState<any[]>([]);
+    const [imdbData, setImdbData] = useState<Movies | []>([]);
+    const [trendingData, setTrendingData] = useState<Movies | []>([]);
+    const [ratedData, setRatedData] = useState<Movies | []>([]);
 
     const [page, setPage] = useState(1);
     const [ratedPage, setRatedPage] = useState(1);
@@ -26,7 +36,7 @@ const DashboardPage = () => {
     const [ratedPageLoading, setRatedPageLoading] = useState(false);
 
     const [modalShow, setModalShow] = useState(false);
-    const [selectedMovie, setSelectedMovie] = useState<any | null>(null);
+    const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
     // User auth
     useEffect(() => {
@@ -35,6 +45,7 @@ const DashboardPage = () => {
         }
     }, [user, isLoading]);
 
+    // gets the initial list of popular movies from the tmdb api
     useEffect(() => {
         if (!mountedPopular.current && !isLoading && user) {
             mountedPopular.current = true;
@@ -53,6 +64,7 @@ const DashboardPage = () => {
         }
     }, [user, isLoading]);
 
+    // loads second page of results upon scroll
     useEffect(() => {
         if (page === 1) return; // skip initial page
         if (!isLoading && user) {
@@ -71,6 +83,7 @@ const DashboardPage = () => {
         }
     }, [page, user, isLoading]);
 
+    // gets the initial list of top rated movies from the tmdb api
     useEffect(() => {
         if (!mountedRated.current && !isLoading && user) {
             mountedRated.current = true;
@@ -89,6 +102,7 @@ const DashboardPage = () => {
         }
     }, [user, isLoading]);
 
+    // loads second page of results upon scroll
     useEffect(() => {
         if (ratedPage === 1) return; // skip initial page
         if (!isLoading && user) {
@@ -107,6 +121,8 @@ const DashboardPage = () => {
         }
     }, [ratedPage, user, isLoading]);
 
+    // gets the initial list of currently trending movies from the tmdb api
+    // only loads 20 movies so no need for additional useEffect hook
     useEffect(() => {
         if (!mountedTrending.current && !isLoading && user) {
             mountedTrending.current = true;
@@ -125,19 +141,24 @@ const DashboardPage = () => {
         }
     }, [user, isLoading]);
 
-    const handleMovieClick = (movie: any) => {
+    // sets the selected movie when clicked
+    const handleMovieClick = (movie: Movie) => {
         setSelectedMovie(movie);
         setModalShow(true);
     };
 
+    // resets the modal when closed
     const resetModalState = () => {
         setModalShow(false);
         setSelectedMovie(null);
     };
 
+    // if no user exists returns nothing
     if (isLoading) return null;
     if (!user) return null;
 
+    // renders the movie lists using the movie carousel component
+    // for all movie lists
     return (
         <Container>
             <Row>

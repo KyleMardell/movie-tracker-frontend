@@ -2,9 +2,14 @@ import api from "./axios";
 
 // Types
 type LoginPayload = {
-    username: string
-    password: string
-}
+    username: string;
+    password: string;
+};
+
+type SignUpPayload = {
+    username: string;
+    password: string;
+};
 
 type RefreshResponse = {
     access: string;
@@ -16,21 +21,18 @@ type Movie = {
     tmdb_id: number;
     image_path: string;
     watched: boolean;
-}
+};
 
 // Login function
 export const login = async (username: string, password: string) => {
     const data: LoginPayload = { username, password };
     return api.post('/api/token/', data);
-}
+};
 
 // Sign Up function
-// CLEAN THIS UP WITH A CORRECT TS TYPE
 export const signUpUser = async (username: string, password: string) => {
-    const response = await api.post("/api/register/", {
-        username,
-        password,
-    });
+    const data: SignUpPayload = { username, password };
+    const response = await api.post("/api/register/", data);
     return response;
 };
 
@@ -50,7 +52,7 @@ export const addMovie = async (movie: Movie) => {
 export const getMovies = async () => {
     const response = await api.get('/api/movies/');
     return response.data;
-}
+};
 
 // Delete Movie from users list
 export const deleteMovie = async (id: number) => {
@@ -62,4 +64,4 @@ export const deleteMovie = async (id: number) => {
 export const updateWatchedMovie = async (id: number) => {
     const response = await api.put(`/api/movies/${id}/toggle-watched/`)
     return response;
-}
+};

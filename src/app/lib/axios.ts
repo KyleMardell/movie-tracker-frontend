@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// set custom api base url
 const api = axios.create({
     baseURL: "https://movie-tracker-api.cap.kylemardell.me/",
 });
