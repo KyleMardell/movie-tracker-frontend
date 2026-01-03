@@ -1,11 +1,14 @@
 import { useRef, useState, useEffect } from "react";
 
+// types
 type UseCarouselDragProps = {
     cardWidth: number;
     moviesLength: number;
     onReachEnd?: () => void;
 };
 
+// function to allow the carousel to drag from left to right
+// measures when a user clicks and drags left to right within the carousel
 export const useCarouselDrag = ({
     cardWidth,
     moviesLength,
@@ -19,21 +22,26 @@ export const useCarouselDrag = ({
     const [focusedIndex, setFocusedIndex] = useState(0);
 
     // ---- drag helpers ----
+
+    // sets the drag to true and logs the click/swipe starting X position
     const startDrag = (pageX: number) => {
         isDragging.current = true;
         setDragStart(pageX);
     };
 
+    // updates scrollLeft based on the X position difference / amount moved
     const moveDrag = (currentX: number) => {
         if (!outerRef.current || dragStart === null || !isDragging.current) return;
 
         const diff = currentX - dragStart;
         outerRef.current.scrollLeft -= diff;
         setDragStart(currentX);
-
         handleNearEnd();
     };
 
+    // snaps carousel to the nearest centered card after dragging
+    // resets the center index to allow correct highlighting of selected movie
+    // resets is dragging to false and position to null
     const stopDrag = () => {
         if (!outerRef.current) return;
 
@@ -60,6 +68,9 @@ export const useCarouselDrag = ({
     };
 
     // ---- pagination ----
+
+    // check when the list end enters the screen
+    // triggers end to load next page of results
     const handleNearEnd = () => {
         if (!outerRef.current || !onReachEnd) return;
 
@@ -74,10 +85,14 @@ export const useCarouselDrag = ({
         }
     };
 
+    // sets the end trigger to false when the movie list length changes
     useEffect(() => {
         hasTriggeredEnd.current = false;
     }, [moviesLength]);
 
+    // returns handlers to use in carousel
+    // checks on mouse/swipe down, move and release
+    // checks for screen bounds
     return {
         outerRef,
         focusedIndex,

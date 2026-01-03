@@ -5,9 +5,11 @@ import { getMovieDetail, getMovieProviders } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
 import { Modal, Button, Image, Row, Col } from "react-bootstrap";
 import { UserMoviesContext } from "@/app/context/UserMoviesContext";
-import { MovieToAdd, MovieProvider, CountryProviders } from "@/app/types";
+import { MovieToAdd, MovieProvider, CountryProviders, TMDBMovie } from "@/app/types";
 
-// Modal specific types
+// UPDATE MOVIE INFORMATION ---- ADD FEATURE
+
+// types
 type Movie = {
     id?: number;
     tmdb_id?: number;
@@ -22,22 +24,23 @@ type MovieModalProps = {
     onHide: () => void;
 };
 
+// Movie modal shows the movie details
+// Allows a user to add a movie to their list, view and change watched status
+// Loads the movie details and watch providers on mount
 const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
     const id = movie?.tmdb_id ?? movie?.id;
-
-    const [movieDetail, setMovieDetail] = useState<any | null>(null);
+    const [movieDetail, setMovieDetail] = useState<TMDBMovie | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [movieProviders, setMovieProviders] = useState<CountryProviders | null>(null);
 
     const context = useContext(UserMoviesContext);
     if (!context) return null;
-
     const { userMovies, setUserMovies } = context;
-
     const [movieIsInList, setMovieIsInList] = useState(false);
     const [addedMovieID, setAddedMovieID] = useState<number | null>(null);
     const [isWatched, setIsWatched] = useState(false);
 
+    // gets the movie details and watch providers
     useEffect(() => {
         if (!id) {
             setMovieDetail(null);
@@ -69,6 +72,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         loadMovieProviders();
     }, [id]);
 
+    // Check if the movie exists in the users list
     useEffect(() => {
         if (userMovies && movieDetail) {
             const foundMovie = userMovies.find(
@@ -86,6 +90,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         }
     }, [userMovies, movieDetail]);
 
+    // Adds the movie to the users list and updates the context
     const handleAddToList = async () => {
         if (!movie?.id || !movie.poster_path) return;
 
@@ -107,6 +112,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         }
     };
 
+    // Deletes movie from the users list and updates the context
     const handleDeleteFromList = async () => {
         if (!addedMovieID) return;
 
@@ -124,6 +130,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         }
     };
 
+    // updates the watched status
     const handleUpdateWatched = async () => {
         if (!addedMovieID) return;
 
@@ -143,6 +150,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         }
     };
 
+    // Resets the modal when closed
     const resetModalState = () => {
         setMovieDetail(null);
         setMovieIsInList(false);
@@ -151,6 +159,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
         setMovieProviders(null);
     };
 
+    // renders the movie details and watch providers
     return (
         <Modal
             show={show}

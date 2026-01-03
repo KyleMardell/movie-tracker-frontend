@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 
+// When a user clicks outside the ref component, sets expanded to false
 const useClickOutsideToggle = () => {
     const [expanded, setExpanded] = useState(false);
     const ref = useRef(null);

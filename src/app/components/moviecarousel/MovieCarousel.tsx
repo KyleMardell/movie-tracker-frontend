@@ -5,6 +5,8 @@ import MovieCard from "../moviecard/MovieCard";
 import styles from "./MovieCarousel.module.css";
 import { useCarouselDrag } from "./useCarouselDrag";
 
+
+// types
 type Movie = {
     id: number;
     title: string;
@@ -12,18 +14,19 @@ type Movie = {
     image_path: string;
 };
 
-type Movies = Movie[];
-
 type MovieCarouselProps = {
-    movies: Movies;
+    movies: Movie[];
     onReachEnd?: () => void;
     onMovieClick: (movie: Movie) => void;
     listName: string;
 }
 
+// movie carousel displays the movie cards in a horizontally scrolling list
+// only allows the user to click the focused/centered movie to avoid false clicks
 const MovieCarousel = ({ movies, onReachEnd, onMovieClick, listName }: MovieCarouselProps) => {
     const [cardWidth, setCardWidth] = useState(250);
 
+    // checks the screen width and sets the card width accordingly
     useEffect(() => {
         const update = () => setCardWidth(window.innerWidth <= 768 ? 110 : 250);
         update();
@@ -31,12 +34,14 @@ const MovieCarousel = ({ movies, onReachEnd, onMovieClick, listName }: MovieCaro
         return () => window.removeEventListener("resize", update);
     }, []);
 
+    // de-structures the drag helpers from the carousel drag hook
     const { outerRef, focusedIndex, handlers } = useCarouselDrag({
         cardWidth,
         moviesLength: movies.length,
         onReachEnd,
     });
 
+    // renders the carousel, uses the mouse drag helpers and passed on click function
     return (
         <div
             className={styles.carouselOuter}
