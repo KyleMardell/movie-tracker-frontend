@@ -1,8 +1,8 @@
 "use client"
 
-import { Form, Container, Row, Col, Button } from "react-bootstrap";
+import { Form, Container, Row, Col, Button, Alert } from "react-bootstrap";
 import styles from "./SignUpPage.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../useAuth";
 import { signUpUser } from "../lib/api";
@@ -14,11 +14,6 @@ type SignUpFormData = {
     password2: string;
 };
 
-type signUpPayload = {
-    username: string;
-    password: string;
-};
-
 // sign up page allows new users to sign up to the app
 // sends sign up data to the custom api and auto logs in using returned tokens
 const SignUpPage = () => {
@@ -28,12 +23,16 @@ const SignUpPage = () => {
         password2: "",
     });
     const { username, password1, password2 } = signUpData;
-    const payload: signUpPayload = {
-        username,
-        password: password1,
-    };
     const { setAuthData, user, isLoading } = useAuth();
+    const [signedUp, setSignedUp] = useState(false);
     const router = useRouter();
+
+    // checks if a user is logged in
+    useEffect(() => {
+        if (!isLoading && user && !signedUp) {
+            router.push("/");
+        }
+    }, [user, isLoading, signedUp]);
 
     // updates state of username and password fields
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +46,6 @@ const SignUpPage = () => {
     // upon submit, sends sign up data to api and auto logs in using returned tokens
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(username, password1, password2);
         if (password1 === password2) {
             try {
                 const response = await signUpUser(username, password1);
@@ -57,8 +55,9 @@ const SignUpPage = () => {
                     accessToken: response.data.access,
                     refreshToken: response.data.refresh
                 };
+                setSignedUp(true);
                 setAuthData(data);
-                router.push("/");
+                router.push("/?welcome=true");
                 // ADD SUCCESS MESSAGE UPON SIGN UP
             } catch (err) {
                 console.error("Signup error:", err);

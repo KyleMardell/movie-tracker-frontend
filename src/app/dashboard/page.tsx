@@ -1,8 +1,8 @@
 "use client"
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert } from "react-bootstrap";
 import { useAuth } from "../useAuth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/tmdb";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
@@ -24,6 +24,10 @@ const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
 
+    const searchParams = useSearchParams();
+    const welcome = searchParams.get("welcome");
+    const [showWelcome, setShowWelcome] = useState(false);
+
     const mountedPopular = useRef(false);
     const mountedTrending = useRef(false);
     const mountedRated = useRef(false);
@@ -40,12 +44,22 @@ const DashboardPage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-    // User auth
+    // User auth, checks for a user and a new user welcome param
     useEffect(() => {
         if (!isLoading && !user) {
             router.push("/login");
         }
-    }, [user, isLoading]);
+        if (welcome === "true") {
+            setShowWelcome(true);
+        }
+    }, [user, isLoading, welcome, router]);
+
+    // if user welcome message is shown, remove param from url
+    useEffect(() => {
+        if (showWelcome) {
+            router.replace("/dashboard", { scroll: false });
+        }
+    }, [showWelcome, router]);
 
     // gets the initial list of popular movies from the tmdb api
     useEffect(() => {
@@ -163,6 +177,17 @@ const DashboardPage = () => {
     // for all movie lists
     return (
         <Container>
+            {showWelcome && (
+                <Alert onClose={() => setShowWelcome(false)} dismissible >
+                    <Alert.Heading>Welcome to my Movie Tracker!</Alert.Heading>
+                    <p>
+                        You can scroll through movie lists, search for movies by name,
+                        add them to your list and mark them as watched.
+                        <br />
+                        Keep track of the movies you have watched or want to watch, all in one simple to use app!
+                    </p>
+                </Alert>
+            )}
             <Row>
                 <Col className="text-center my-5">
                     <h1>Dashboard</h1>
