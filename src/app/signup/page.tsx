@@ -12,10 +12,15 @@ type SignUpFormData = {
     username: string;
     password1: string;
     password2: string;
-}
+};
 
-type signUpPayload = { username: string; password: string; }
+type signUpPayload = {
+    username: string;
+    password: string;
+};
 
+// sign up page allows new users to sign up to the app
+// sends sign up data to the custom api and auto logs in using returned tokens
 const SignUpPage = () => {
     const [signUpData, setSignUpData] = useState<SignUpFormData>({
         username: "",
@@ -30,6 +35,7 @@ const SignUpPage = () => {
     const { setAuthData, user, isLoading } = useAuth();
     const router = useRouter();
 
+    // updates state of username and password fields
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setSignUpData(prev => ({
@@ -38,6 +44,7 @@ const SignUpPage = () => {
         }));
     };
 
+    // upon submit, sends sign up data to api and auto logs in using returned tokens
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log(username, password1, password2);
@@ -61,7 +68,7 @@ const SignUpPage = () => {
         }
     };
 
-
+    // renders the sign up page and sign up form
     return (
         <Container>
             <Row className="mt-5">

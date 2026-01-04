@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    // sets auth data and saves access tokens to local storage
     const setAuthData = (data: {
         user: string
         accessToken: string
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem("movieTrackerData", JSON.stringify(data));
     };
 
+    // logs out user by deleting access token from local storage
     const logout = () => {
         setUser(null);
         setAccessToken(null);
@@ -51,6 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.removeItem("movieTrackerData");
     }
 
+    // auto refreshes token for use upon expiry
     const handleRefreshToken = async () => {
         if (!user) return;
         if (!refreshToken) return;
@@ -67,6 +70,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
+    // checks local storage for access tokens
     useEffect(() => {
         const stored = localStorage.getItem("movieTrackerData")
         if (stored) {
@@ -78,6 +82,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
     }, []);
 
+    // sets an interval to obtain a new refresh token prior to expiry
     useEffect(() => {
         const interval = setInterval(() => {
             handleRefreshToken();
@@ -85,6 +90,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return () => clearInterval(interval);
     }, [refreshToken, user]);
 
+    // auth provider props
     let value = {
         user,
         accessToken,

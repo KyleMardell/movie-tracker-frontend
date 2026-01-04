@@ -18,6 +18,8 @@ type Movie = {
 
 type Movies = Movie[];
 
+// dashboard displays tmdb movie lists
+// popular, top rated and trending movie lists
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();

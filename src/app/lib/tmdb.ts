@@ -1,11 +1,14 @@
 import axios from "axios";
 
+// read access token from environment variables
 const TMDB_READ_TOKEN = process.env.NEXT_PUBLIC_TMDB_READ_TOKEN;
 
+// set base url for tmdb api
 const tmdbApi = axios.create({
     baseURL: "https://api.themoviedb.org/3",
 });
 
+// Attach access token to every request
 tmdbApi.interceptors.request.use(
     (config) => {
         config.headers.Authorization = `Bearer ${TMDB_READ_TOKEN}`;
@@ -15,6 +18,7 @@ tmdbApi.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Search movies
 export const searchMovies = async (movie: string, page:number) => {
     return tmdbApi.get(`/search/movie`, {
         params: {
@@ -25,6 +29,7 @@ export const searchMovies = async (movie: string, page:number) => {
     });
 };
 
+// Get popular movies list by page number
 export const getPopularMovies = async (page:number) => {
     return tmdbApi.get("/movie/popular", {
         params: {
@@ -34,6 +39,7 @@ export const getPopularMovies = async (page:number) => {
     });
 };
 
+// Get trending movies list: returns a list of 20 movies only
 export const getTrendingMovies = async () => {
     return tmdbApi.get("/trending/movie/day", {
         params: {
@@ -42,6 +48,7 @@ export const getTrendingMovies = async () => {
     });
 };
 
+// Get top rates movies list by page number
 export const getTopRatedMovies = async (page:number) => {
     return tmdbApi.get("/movie/top_rated", {
         params: {
@@ -51,6 +58,7 @@ export const getTopRatedMovies = async (page:number) => {
     });
 };
 
+// Get a movies details by movie id
 export const getMovieDetail = async (id:number) => {
     return tmdbApi.get(`/movie/${id}`, {
         params: {
@@ -59,6 +67,7 @@ export const getMovieDetail = async (id:number) => {
     });
 };
 
+// Get a list of movie watch providers by id number
 export const getMovieProviders = async (id: number) => {
     return tmdbApi.get(`/movie/${id}/watch/providers`);
 };
