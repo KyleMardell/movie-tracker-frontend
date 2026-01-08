@@ -70,9 +70,14 @@ const SignUpPage = () => {
     // renders the sign up page and sign up form
     return (
         <Container>
-            <Row className="mt-5">
+            <Row className="my-5">
                 <Col>
-                    <img src="/images/logo.png" alt="Movie Tracker Logo" className={styles.logo} />
+                    <img src="/images/logo.webp" alt="Movie Tracker Logo" className={styles.logo} />
+                </Col>
+            </Row>
+            <Row className="text-center mb-3">
+                <Col>
+                    <h1>Sign Up</h1>
                 </Col>
             </Row>
             <Row>

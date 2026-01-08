@@ -28,7 +28,7 @@ const NavBar = () => {
     // displays a log out confirmation modal on log out
     return (
         <>
-        <Navbar expanded={expanded} ref={ref} expand="lg">
+        <Navbar expanded={expanded} ref={ref} expand="lg" bg="black" data-bs-theme="dark" fixed="top">
             <Container>
                 <Navbar.Brand as={Link} href="/">Movie Tracker</Navbar.Brand>
                 <Navbar.Toggle onClick={() => setExpanded(!expanded)} aria-controls="navbar-nav" />

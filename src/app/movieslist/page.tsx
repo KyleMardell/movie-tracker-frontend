@@ -53,9 +53,9 @@ const UserMoviesPage = () => {
     // renders the user movie list page
     return (
         <Container>
-            <Row className="my-5">
-                <Col className="text-center">
-                    <h1>{user}'s Movie List</h1>
+            <Row className="my-5 text-center">
+                <Col>
+                    <h1>{user}'s<br />Movie List</h1>
                 </Col>
             </Row>
             {
@@ -70,8 +70,8 @@ const UserMoviesPage = () => {
                         </Col>
                     </Row>
                     :
-                    <Row className="my-5">
-                        <Col className="text-center">
+                    <Row className="my-5 text-center">
+                        <Col>
                             <h2>No movies added to list</h2>
                         </Col>
                     </Row>

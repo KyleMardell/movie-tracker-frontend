@@ -5,6 +5,7 @@ import { login } from "../lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../useAuth";
 import { Container, Row, Col, Button, Alert, Form } from "react-bootstrap";
+import Link from "next/link";
 import styles from "./LoginPage.module.css";
 
 // log in page allows users to log in
@@ -58,9 +59,14 @@ const LoginPage = () => {
                     </Alert>
                 )
             }
-            <Row className="mt-5">
+            <Row className="my-5">
                 <Col>
-                    <img src="/images/logo.png" alt="Movie Tracker Logo" className={styles.logo} />
+                    <img src="/images/logo.webp" alt="Movie Tracker Logo" className={styles.logo} />
+                </Col>
+            </Row>
+            <Row className="text-center mb-3">
+                <Col>
+                    <h1>Log In</h1>
                 </Col>
             </Row>
             <Row>
@@ -76,6 +82,11 @@ const LoginPage = () => {
                         </Form.Group>
                         <Button type="submit" className={styles.loginButton}>Login</Button>
                     </Form>
+                </Col>
+            </Row>
+            <Row className="text-center my-3">
+                <Col>
+                    <p>Don't have an account, <Link href="/signup">Sign Up Here</Link>.<br />No email required!</p>
                 </Col>
             </Row>
         </Container>

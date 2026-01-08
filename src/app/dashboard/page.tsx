@@ -188,9 +188,9 @@ const DashboardPage = () => {
                     </p>
                 </Alert>
             )}
-            <Row>
-                <Col className="text-center my-5">
-                    <h1>Dashboard</h1>
+            <Row className="text-center my-5">
+                <Col>
+                    <h1>Home</h1>
                 </Col>
             </Row>
             <Row>

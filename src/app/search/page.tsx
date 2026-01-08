@@ -104,11 +104,16 @@ const MovieSearchPage = () => {
                     </Alert>
                 )
             }
+            <Row className="my-5 text-center">
+                <Col>
+                    <h1>Search Movies</h1>
+                </Col>
+            </Row>
             <Row>
                 <Col className="d-flex justify-content-center">
                     <Form onSubmit={handleSubmit} className="d-flex flex-column text-center">
                         <Form.Group className="mb-3">
-                            <Form.Label>Search Movies</Form.Label>
+                            <Form.Label hidden>Search Movies</Form.Label>
                             <Form.Control type="text" name="searchTerm" id="searchTerm" value={searchTerm} placeholder="Enter movie name" onChange={e => { setSearchTerm(e.target.value); setError(null); }} required />
                         </Form.Group>
                         <Button type="submit" className={styles.searchButton}>
