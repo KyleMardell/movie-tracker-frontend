@@ -44,6 +44,9 @@ const DashboardPage = () => {
     const [modalShow, setModalShow] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
+    const [error, setError] = useState<string | null>(null);
+    const [showError, setShowError] = useState(false);
+
     // User auth, checks for a user and a new user welcome param
     useEffect(() => {
         if (!isLoading && !user) {
@@ -70,8 +73,10 @@ const DashboardPage = () => {
                 try {
                     const response = await getPopularMovies(1);
                     setImdbData(response.data.results);
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    setError(err);
+                    setShowError(true);
                 } finally {
                     setPageLoading(false);
                 }
@@ -89,8 +94,10 @@ const DashboardPage = () => {
                 try {
                     const response = await getPopularMovies(page);
                     setImdbData(prev => [...prev, ...response.data.results]);
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    setError(err);
+                    setShowError(true);
                 } finally {
                     setPageLoading(false);
                 }
@@ -108,8 +115,10 @@ const DashboardPage = () => {
                 try {
                     const response = await getTopRatedMovies(1);
                     setRatedData(response.data.results);
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    setError(err);
+                    setShowError(true);
                 } finally {
                     setRatedPageLoading(false);
                 }
@@ -127,8 +136,10 @@ const DashboardPage = () => {
                 try {
                     const response = await getTopRatedMovies(ratedPage);
                     setRatedData(prev => [...prev, ...response.data.results]);
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    setError(err);
+                    setShowError(true);
                 } finally {
                     setRatedPageLoading(false);
                 }
@@ -147,8 +158,10 @@ const DashboardPage = () => {
                 try {
                     const response = await getTrendingMovies();
                     setTrendingData(response.data.results);
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    setError(err);
+                    setShowError(true);
                 } finally {
                     setPageLoading(false);
                 }
@@ -188,6 +201,14 @@ const DashboardPage = () => {
                     </p>
                 </Alert>
             )}
+            {
+                showError && (
+                    <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
+                        <Alert.Heading>Oh No! You got an error.</Alert.Heading>
+                        <p>{error}</p>
+                    </Alert>
+                )
+            }
             <Row className="text-center my-5">
                 <Col>
                     <h1>Home</h1>

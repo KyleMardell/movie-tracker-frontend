@@ -27,6 +27,9 @@ const SignUpPage = () => {
     const [signedUp, setSignedUp] = useState(false);
     const router = useRouter();
 
+    const [error, setError] = useState<string | null>(null);
+    const [showError, setShowError] = useState(false);
+
     // checks if a user is logged in
     useEffect(() => {
         if (!isLoading && user && !signedUp) {
@@ -59,17 +62,27 @@ const SignUpPage = () => {
                 setAuthData(data);
                 router.push("/?welcome=true");
                 // ADD SUCCESS MESSAGE UPON SIGN UP
-            } catch (err) {
-                console.error("Signup error:", err);
+            } catch (err: any) {
+                setError(err);
+                setShowError(true);
             }
         } else {
-            console.log("Passwords DO NOT match");
+            setError("Passwords DO NOT match");
+            setShowError(true);
         }
     };
 
     // renders the sign up page and sign up form
     return (
         <Container>
+            {
+                showError && (
+                    <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
+                        <Alert.Heading>Oh No! You got an error.</Alert.Heading>
+                        <p>{error}</p>
+                    </Alert>
+                )
+            }
             <Row className="my-5">
                 <Col>
                     <img src="/images/logo.webp" alt="Movie Tracker Logo" className={styles.logo} />
