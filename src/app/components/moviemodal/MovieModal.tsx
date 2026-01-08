@@ -92,20 +92,21 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
 
     // Adds the movie to the users list and updates the context
     const handleAddToList = async () => {
-        if (!movie?.id || !movie.poster_path) return;
+        if (!movieDetail) return;
 
         const movieToAdd: MovieToAdd = {
-            title: movie.title,
-            tmdb_id: movie.id,
-            image_path: movie.poster_path,
+            title: movieDetail.title,
+            tmdb_id: movieDetail.id,
+            image_path: movieDetail.poster_path || "",
             watched: false,
         };
 
         try {
             const response = await addMovie(movieToAdd);
             if (response.status === 201) {
-                setUserMovies((prev) => [...prev, response.data]);
+                setUserMovies(prev => [...prev, response.data]);
                 setMovieIsInList(true);
+                setAddedMovieID(response.data.id);
             }
         } catch (err) {
             console.log(err);
@@ -249,7 +250,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
 
             <Modal.Footer>
                 {movieIsInList ? (
-                    <Button onClick={handleDeleteFromList}>Delete</Button>
+                    <Button onClick={handleDeleteFromList}>Remove from List</Button>
                 ) : (
                     <Button onClick={handleAddToList}>Add to List</Button>
                 )}
