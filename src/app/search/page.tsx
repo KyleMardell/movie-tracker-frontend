@@ -26,6 +26,7 @@ const MovieSearchPage = () => {
     const { user, isLoading } = useAuth();
     const [error, setError] = useState<string | null>(null);
     const [showError, setShowError] = useState(false);
+    const [noResults, setNoResults] = useState(false);
 
     const [modalShow, setModalShow] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
@@ -49,10 +50,12 @@ const MovieSearchPage = () => {
         setResultsPage(1);
         setResultsLoading(true);
         try {
-            console.log("Searching for:", searchTerm);
             const response = await searchMovies(searchTerm, 1);
             // see response.data.results for search results array.
             setSearchResults(response.data.results);
+            if (response.data.results.length == 0) {
+                setNoResults(true);
+            }
         } catch (err: any) {
             setError(err);
             setShowError(true);
@@ -101,6 +104,14 @@ const MovieSearchPage = () => {
                     <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
                         <Alert.Heading>Oh No! You got an error.</Alert.Heading>
                         <p>{error}</p>
+                    </Alert>
+                )
+            }
+            {
+                noResults && (
+                    <Alert variant="dark" onClose={() => { setShowError(false); }} className="text-center" dismissible>
+                        <Alert.Heading>Oops, there are no search results for {searchTerm}</Alert.Heading>
+                        <p>please try another search</p>
                     </Alert>
                 )
             }
