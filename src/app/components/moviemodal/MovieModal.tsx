@@ -211,7 +211,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                                             </div>
                                         </Accordion.Header>
                                         <Accordion.Body>
-                                            <p className="my-3">{movieDetail?.overview || "No movie selected"}</p>
+                                            <p className="my-3 electrolize-regular">{movieDetail?.overview || "No movie selected"}</p>
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>

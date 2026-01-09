@@ -74,11 +74,11 @@ const LoginPage = () => {
                     <Form onSubmit={handleSubmit} className="d-flex flex-column text-center">
                         <Form.Group className="mb-3">
                             <Form.Label htmlFor="username" hidden>Username</Form.Label>
-                            <Form.Control type="text" id="username" value={username} placeholder="Username" onChange={e => { setUsername(e.target.value); setError(null); }} required />
+                            <Form.Control className="electrolize-regular" type="text" id="username" value={username} placeholder="Username" onChange={e => { setUsername(e.target.value); setError(null); }} required />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label htmlFor="password" hidden>Password</Form.Label>
-                            <Form.Control type="password" name="password" id="password" value={password} placeholder="Password" onChange={e => { setPassword(e.target.value); setError(null); }} required />
+                            <Form.Control className="electrolize-regular" type="password" name="password" id="password" value={password} placeholder="Password" onChange={e => { setPassword(e.target.value); setError(null); }} required />
                         </Form.Group>
                         <Button type="submit" className={styles.loginButton}>Login</Button>
                     </Form>
@@ -86,7 +86,7 @@ const LoginPage = () => {
             </Row>
             <Row className="text-center my-3">
                 <Col>
-                    <p>Don't have an account, <Link href="/signup">Sign Up Here</Link>.<br />No email required!</p>
+                    <p className="electrolize-regular">Don't have an account, <Link className={styles.signupLink} href="/signup">Sign Up Here</Link>.<br />No email required!</p>
                 </Col>
             </Row>
         </Container>

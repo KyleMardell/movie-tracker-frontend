@@ -99,6 +99,7 @@ const SignUpPage = () => {
                         <Form.Group controlId="username" className="mb-3">
                             <Form.Label className="d-none">Username</Form.Label>
                             <Form.Control
+                                className="electrolize-regular"
                                 type="text"
                                 placeholder="Username"
                                 name="username"
@@ -110,6 +111,7 @@ const SignUpPage = () => {
                         <Form.Group controlId="password1" className="mb-3">
                             <Form.Label className="d-none">Password</Form.Label>
                             <Form.Control
+                                className="electrolize-regular"
                                 type="password"
                                 placeholder="Password"
                                 name="password1"
@@ -123,6 +125,7 @@ const SignUpPage = () => {
                                 Confirm Password
                             </Form.Label>
                             <Form.Control
+                                className="electrolize-regular"
                                 type="password"
                                 placeholder="Confirm Password"
                                 name="password2"

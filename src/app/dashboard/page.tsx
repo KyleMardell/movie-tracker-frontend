@@ -193,8 +193,8 @@ const DashboardPage = () => {
         <Container>
             {showWelcome && (
                 <Alert className={styles.welcomeAlert} onClose={() => setShowWelcome(false)} dismissible >
-                    <Alert.Heading>Welcome to my Movie Tracker!</Alert.Heading>
-                    <p>
+                    <Alert.Heading className="zen-dots-regular">Welcome to my Movie Tracker!</Alert.Heading>
+                    <p className="electrolize-regular">
                         You can scroll through movie lists, search for movies by name,
                         add them to your list and mark them as watched.
                         <br />
@@ -205,8 +205,8 @@ const DashboardPage = () => {
             {
                 showError && (
                     <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
-                        <Alert.Heading>Oh No! You got an error.</Alert.Heading>
-                        <p>{error}</p>
+                        <Alert.Heading className="zen-dots-regular">Oh No! You got an error.</Alert.Heading>
+                        <p className="electrolize-regular">{error}</p>
                     </Alert>
                 )
             }

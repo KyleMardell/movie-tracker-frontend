@@ -7,4 +7,13 @@
 
 .loginButton {
     background-color: #966AE8;
+    font-family: "Electrolize", sans-serif;
+}
+
+.signupLink {
+    text-decoration: underline;
+}
+
+.signupLink:hover {
+    color: #966AE8 !important;
 }
