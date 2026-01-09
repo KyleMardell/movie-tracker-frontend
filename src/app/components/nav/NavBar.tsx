@@ -6,6 +6,7 @@ import { useAuth } from '../../useAuth';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useClickOutsideToggle from '../../hooks/useClickOutsideToggle';
+import styles from "./NavBar.module.css";
 
 // Nav bar displays different nav options for logged in or out user
 const NavBar = () => {
@@ -50,11 +51,11 @@ const NavBar = () => {
                 </Navbar.Collapse>
             </Container>
         </Navbar>
-        <Modal show={showLogout} onHide={handleCloseLogout}>
-            <Modal.Body>Are you sure you want to log out?</Modal.Body>
-            <Modal.Footer>
-                <Button variant='secondary' onClick={handleCloseLogout}>Cancel</Button>
-                <Button variant='primary' onClick={handleLogout}>Confirm Logout</Button>
+        <Modal className={styles.logoutModal} show={showLogout} onHide={handleCloseLogout}>
+            <Modal.Body className={styles.logoutModal}>Are you sure you want to log out?</Modal.Body>
+            <Modal.Footer className={styles.logoutModal}>
+                <Button className={styles.cancelBtn} onClick={handleCloseLogout}>Cancel</Button>
+                <Button className={styles.confirmBtn}  onClick={handleLogout}>Confirm Logout</Button>
             </Modal.Footer>
         </Modal>
         </>

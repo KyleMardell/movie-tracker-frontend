@@ -20,6 +20,40 @@
     color: white;
 }
 
+.movieUnWatchedBtn {
+    background-color: #966AE8 !important;
+    min-width: 150px;
+}
+
+.movieWatchedBtn {
+    background-color: #7443C4 !important;
+    min-width: 150px;
+}
+
+.removeMovieBtn {
+    background-color: #6231B1 !important;
+    min-width: 150px;
+}
+
+.addMovieBtn {
+    background-color: #966AE8 !important;
+    min-width: 150px;
+}
+
+:global(.movie-accordion .accordion-item),
+:global(.movie-accordion .accordion-button),
+:global(.movie-accordion .accordion-body) {
+    background: transparent !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+:global(.movie-accordion .accordion-button::after) {
+    filter: invert(1);
+}
+
 @media (max-width: 768px) {
     .providerLogo {
         height: auto;

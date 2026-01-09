@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/tmdb";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
+import styles from "./Dashboard.module.css";
 
 // types
 type Movie = {
@@ -191,7 +192,7 @@ const DashboardPage = () => {
     return (
         <Container>
             {showWelcome && (
-                <Alert onClose={() => setShowWelcome(false)} dismissible >
+                <Alert className={styles.welcomeAlert} onClose={() => setShowWelcome(false)} dismissible >
                     <Alert.Heading>Welcome to my Movie Tracker!</Alert.Heading>
                     <p>
                         You can scroll through movie lists, search for movies by name,

@@ -3,7 +3,7 @@
 import { addMovie, deleteMovie, updateWatchedMovie } from "@/app/lib/api";
 import { getMovieDetail, getMovieProviders } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
-import { Modal, Button, Image, Row, Col, Spinner } from "react-bootstrap";
+import { Modal, Button, Row, Col, Spinner, Accordion } from "react-bootstrap";
 import { UserMoviesContext } from "@/app/context/UserMoviesContext";
 import { MovieToAdd, MovieProvider, CountryProviders, TMDBMovie } from "@/app/types";
 import styles from "./MovieModal.module.css";
@@ -198,17 +198,28 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                             </Modal.Header>
 
                             <Modal.Body>
-                                <Row>
-                                    <Col>
-                                        <p>Released - {movieDetail?.release_date}</p>
-                                        <p>{movieDetail?.overview || "No movie selected"}</p>
-                                    </Col>
-                                </Row>
+                                <Accordion className="movie-accordion mb-4">
+                                    <Accordion.Item eventKey="0">
+                                        <Accordion.Header>
+                                            <div className="d-flex justify-content-between w-100">
+                                                <div>
+                                                    Released - {movieDetail?.release_date.slice(0, 4) || "No movie selected"}
+                                                </div>
+                                                <div className="mx-2">
+                                                    Description
+                                                </div>
+                                            </div>
+                                        </Accordion.Header>
+                                        <Accordion.Body>
+                                            <p className="my-3">{movieDetail?.overview || "No movie selected"}</p>
+                                        </Accordion.Body>
+                                    </Accordion.Item>
+                                </Accordion>
 
                                 {movieProviders ? (
                                     <>
                                         {movieProviders.flatrate && (
-                                            <Row>
+                                            <Row className="mb-3">
                                                 <h3>Stream</h3>
                                                 {movieProviders.flatrate.map(
                                                     (provider: MovieProvider) => (
@@ -224,7 +235,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                                         )}
 
                                         {movieProviders.buy && (
-                                            <Row>
+                                            <Row className="mb-3">
                                                 <h3>Buy</h3>
                                                 {movieProviders.buy.map(
                                                     (provider: MovieProvider) => (
@@ -240,7 +251,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                                         )}
 
                                         {movieProviders.rent && (
-                                            <Row>
+                                            <Row className="mb-3">
                                                 <h3>Rent</h3>
                                                 {movieProviders.rent.map(
                                                     (provider: MovieProvider) => (
@@ -261,16 +272,16 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                             </Modal.Body>
 
                             <Modal.Footer>
-                                {movieIsInList ? (
-                                    <Button onClick={handleDeleteFromList}>Remove from List</Button>
-                                ) : (
-                                    <Button onClick={handleAddToList}>Add to List</Button>
-                                )}
-
                                 {movieIsInList && (
-                                    <Button onClick={handleUpdateWatched}>
+                                    <Button onClick={handleUpdateWatched} className={isWatched ? styles.movieWatchedBtn : styles.movieUnWatchedBtn} >
                                         {isWatched ? "Mark as Unwatched" : "Mark as Watched"}
                                     </Button>
+                                )}
+
+                                {movieIsInList ? (
+                                    <Button className={styles.removeMovieBtn} onClick={handleDeleteFromList}>Remove from List</Button>
+                                ) : (
+                                    <Button className={styles.addMovieBtn} onClick={handleAddToList}>Add to List</Button>
                                 )}
                             </Modal.Footer>
                         </div>
