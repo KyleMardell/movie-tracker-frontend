@@ -3,9 +3,10 @@
 import { addMovie, deleteMovie, updateWatchedMovie } from "@/app/lib/api";
 import { getMovieDetail, getMovieProviders } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
-import { Modal, Button, Image, Row, Col } from "react-bootstrap";
+import { Modal, Button, Image, Row, Col, Spinner } from "react-bootstrap";
 import { UserMoviesContext } from "@/app/context/UserMoviesContext";
 import { MovieToAdd, MovieProvider, CountryProviders, TMDBMovie } from "@/app/types";
+import styles from "./MovieModal.module.css";
 
 // UPDATE MOVIE INFORMATION ---- ADD FEATURE
 
@@ -171,96 +172,111 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                 resetModalState();
                 onHide();
             }}
+            className={styles.movieModal}
         >
-            <Modal.Header closeButton>
-                <Modal.Title id={`${movie?.title} details`}>
-                    {movieDetail?.title || "No movie selected"} <br />
-                    Released - {movieDetail?.release_date}
-                </Modal.Title>
-            </Modal.Header>
-
-            <Modal.Body>
-                <Row>
-                    <Col>
-                        <Image
-                            src={`https://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`}
-                            fluid
-                        />
-                        <p>{movieDetail?.overview || "No movie selected"}</p>
-                    </Col>
-                </Row>
-
-                {movieProviders ? (
+            <div
+                className={styles.posterBackground}
+                style={{
+                    backgroundImage: movieDetail?.poster_path
+                        ? `url(https://image.tmdb.org/t/p/w500/${movieDetail.poster_path})`
+                        : "none",
+                }}
+            >
+                {loadingDetail ?
+                    <Modal.Body className="d-flex justify-content-center">
+                        <Spinner animation="border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                    </Modal.Body>
+                    :
                     <>
-                        {movieProviders.flatrate && (
-                            <Row>
-                                <h3>Stream</h3>
-                                <Col className="d-flex">
-                                    {movieProviders.flatrate.map(
-                                        (provider: MovieProvider) => (
-                                            <div key={provider.provider_id}>
-                                                <img
-                                                    src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                </Col>
-                            </Row>
-                        )}
+                        <div className={styles.modalContent}>
+                            <Modal.Header closeButton closeVariant="white">
+                                <Modal.Title id={`${movie?.title} details`}>
+                                    {movieDetail?.title || "No movie selected"}
+                                </Modal.Title>
+                            </Modal.Header>
 
-                        {movieProviders.buy && (
-                            <Row>
-                                <h3>Buy</h3>
-                                <Col className="d-flex">
-                                    {movieProviders.buy.map(
-                                        (provider: MovieProvider) => (
-                                            <div key={provider.provider_id}>
-                                                <img
-                                                    src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                </Col>
-                            </Row>
-                        )}
+                            <Modal.Body>
+                                <Row>
+                                    <Col>
+                                        <p>Released - {movieDetail?.release_date}</p>
+                                        <p>{movieDetail?.overview || "No movie selected"}</p>
+                                    </Col>
+                                </Row>
 
-                        {movieProviders.rent && (
-                            <Row>
-                                <h3>Rent</h3>
-                                <Col className="d-flex">
-                                    {movieProviders.rent.map(
-                                        (provider: MovieProvider) => (
-                                            <div key={provider.provider_id}>
-                                                <img
-                                                    src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                </Col>
-                            </Row>
-                        )}
+                                {movieProviders ? (
+                                    <>
+                                        {movieProviders.flatrate && (
+                                            <Row>
+                                                <h3>Stream</h3>
+                                                {movieProviders.flatrate.map(
+                                                    (provider: MovieProvider) => (
+                                                        <Col className="d-flex p-0" key={provider.provider_id}>
+                                                            <img
+                                                                src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
+                                                                className={styles.providerLogo}
+                                                            />
+                                                        </Col>
+                                                    )
+                                                )}
+                                            </Row>
+                                        )}
+
+                                        {movieProviders.buy && (
+                                            <Row>
+                                                <h3>Buy</h3>
+                                                {movieProviders.buy.map(
+                                                    (provider: MovieProvider) => (
+                                                        <Col className="d-flex p-0" key={provider.provider_id}>
+                                                            <img
+                                                                src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
+                                                                className={styles.providerLogo}
+                                                            />
+                                                        </Col>
+                                                    )
+                                                )}
+                                            </Row>
+                                        )}
+
+                                        {movieProviders.rent && (
+                                            <Row>
+                                                <h3>Rent</h3>
+                                                {movieProviders.rent.map(
+                                                    (provider: MovieProvider) => (
+                                                        <Col className="d-flex p-0" key={provider.provider_id}>
+                                                            <img
+                                                                src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
+                                                                className={styles.providerLogo}
+                                                            />
+                                                        </Col>
+                                                    )
+                                                )}
+                                            </Row>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>Not available to stream, rent or buy.</p>
+                                )}
+                            </Modal.Body>
+
+                            <Modal.Footer>
+                                {movieIsInList ? (
+                                    <Button onClick={handleDeleteFromList}>Remove from List</Button>
+                                ) : (
+                                    <Button onClick={handleAddToList}>Add to List</Button>
+                                )}
+
+                                {movieIsInList && (
+                                    <Button onClick={handleUpdateWatched}>
+                                        {isWatched ? "Mark as Unwatched" : "Mark as Watched"}
+                                    </Button>
+                                )}
+                            </Modal.Footer>
+                        </div>
                     </>
-                ) : (
-                    <p>Not available to stream, rent or buy.</p>
-                )}
-            </Modal.Body>
-
-            <Modal.Footer>
-                {movieIsInList ? (
-                    <Button onClick={handleDeleteFromList}>Remove from List</Button>
-                ) : (
-                    <Button onClick={handleAddToList}>Add to List</Button>
-                )}
-
-                {movieIsInList && (
-                    <Button onClick={handleUpdateWatched}>
-                        {isWatched ? "Mark as Unwatched" : "Mark as Watched"}
-                    </Button>
-                )}
-            </Modal.Footer>
+                }
+            </div>
         </Modal>
     );
 };

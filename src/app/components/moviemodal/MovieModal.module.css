@@ -1,0 +1,28 @@
+.posterBackground {
+    position: relative;
+    min-height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.posterBackground::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1;
+}
+
+.modalContent {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .providerLogo {
+        height: auto;
+        max-width: 50px;
+    }
+}
