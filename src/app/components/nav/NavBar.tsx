@@ -31,7 +31,7 @@ const NavBar = () => {
         <>
         <Navbar expanded={expanded} ref={ref} expand="lg" bg="black" data-bs-theme="dark" fixed="top">
             <Container>
-                <Navbar.Brand as={Link} href="/">Movie Tracker</Navbar.Brand>
+                <Navbar.Brand className='zen-dots-regular' as={Link} href="/">Movie Tracker</Navbar.Brand>
                 <Navbar.Toggle onClick={() => setExpanded(!expanded)} aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto">

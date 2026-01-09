@@ -23,21 +23,25 @@
 .movieUnWatchedBtn {
     background-color: #966AE8 !important;
     min-width: 150px;
+    font-family: "Electrolize", sans-serif;
 }
 
 .movieWatchedBtn {
     background-color: #7443C4 !important;
     min-width: 150px;
+    font-family: "Electrolize", sans-serif;
 }
 
 .removeMovieBtn {
     background-color: #6231B1 !important;
     min-width: 150px;
+    font-family: "Electrolize", sans-serif;
 }
 
 .addMovieBtn {
     background-color: #966AE8 !important;
     min-width: 150px;
+    font-family: "Electrolize", sans-serif;
 }
 
 :global(.movie-accordion .accordion-item),

@@ -191,7 +191,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                     :
                     <>
                         <div className={styles.modalContent}>
-                            <Modal.Header closeButton closeVariant="white">
+                            <Modal.Header className="zen-dots-regular" closeButton closeVariant="white">
                                 <Modal.Title id={`${movie?.title} details`}>
                                     {movieDetail?.title || "No movie selected"}
                                 </Modal.Title>

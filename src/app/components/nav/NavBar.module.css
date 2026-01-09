@@ -1,12 +1,15 @@
 .logoutModal {
     background-color: black !important;
     color: white !important;
+    font-family: "Electrolize", sans-serif;
 }
 
 .cancelBtn {
     background-color: #7443C4 !important;
+    font-family: "Electrolize", sans-serif;
 }
 
 .confirmBtn {
     background-color: #966AE8 !important;
+    font-family: "Electrolize", sans-serif;
 }
