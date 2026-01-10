@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { useAuth } from "../useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
