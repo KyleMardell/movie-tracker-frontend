@@ -102,16 +102,16 @@ const MovieSearchPage = () => {
             {
                 showError && (
                     <Alert variant="danger" onClose={() => { setShowError(false); }} dismissible>
-                        <Alert.Heading>Oh No! You got an error.</Alert.Heading>
-                        <p>{error}</p>
+                        <Alert.Heading className="zen-dots-regular">Oh No! You got an error.</Alert.Heading>
+                        <p className="electrolize-regular">{error}</p>
                     </Alert>
                 )
             }
             {
                 noResults && (
                     <Alert variant="dark" onClose={() => { setShowError(false); }} className="text-center" dismissible>
-                        <Alert.Heading>Oops, there are no search results for {searchTerm}</Alert.Heading>
-                        <p>please try another search</p>
+                        <Alert.Heading className="zen-dots-regular">Oops, there are no search results for {searchTerm}</Alert.Heading>
+                        <p className="electrolize-regular">please try another search</p>
                     </Alert>
                 )
             }

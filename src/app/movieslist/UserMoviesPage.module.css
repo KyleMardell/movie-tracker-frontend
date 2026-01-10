@@ -1,0 +1,12 @@
+.customRadio :global(.form-check-input) {
+    border-color: #966AE8 !important;
+}
+
+.customRadio :global(.form-check-input:checked) {
+    background-color: #966AE8 !important;
+    border-color: #966AE8 !important;
+}
+
+.customRadio :global(.form-check-input:focus) {
+    box-shadow: 0 0 0 0.25rem rgba(150, 106, 232, 0.25);
+}
