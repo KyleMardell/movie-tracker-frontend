@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { useAuth } from "../useAuth";
@@ -25,9 +25,7 @@ type Movies = Movie[];
 const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    
-    const welcome = searchParams.get("welcome");
+
     const [showWelcome, setShowWelcome] = useState(false);
 
     const mountedPopular = useRef(false);
@@ -54,10 +52,14 @@ const DashboardPage = () => {
         if (!isLoading && !user) {
             router.push("/login");
         }
-        if (welcome === "true") {
-            setShowWelcome(true);
+
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("welcome") === "true") {
+                setShowWelcome(true);
+            }
         }
-    }, [user, isLoading, welcome, router]);
+    }, [user, isLoading, router]);
 
     // if user welcome message is shown, remove param from url
     useEffect(() => {
