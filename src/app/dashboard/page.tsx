@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { useAuth } from "../useAuth";
