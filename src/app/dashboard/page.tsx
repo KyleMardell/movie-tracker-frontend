@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { useAuth } from "../useAuth";
