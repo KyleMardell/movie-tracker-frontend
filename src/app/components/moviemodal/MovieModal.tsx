@@ -1,5 +1,6 @@
 "use client";
 
+
 import { addMovie, deleteMovie, updateWatchedMovie } from "@/app/lib/api";
 import { getMovieDetail, getMovieProviders } from "@/app/lib/tmdb";
 import { useEffect, useState, useContext } from "react";
