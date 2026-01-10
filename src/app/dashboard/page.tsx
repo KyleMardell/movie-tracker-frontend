@@ -1,8 +1,10 @@
-export const dynamic = "force-dynamic"; // critical
-export const fetchCache = "force-no-store"; // critical
+"use client"; // optional here if using only dynamic import
 
-import DashboardPage from "./DashboardClient";
+import dynamic from "next/dynamic";
+
+// Force dynamic import, disable SSR entirely
+const DashboardClient = dynamic(() => import("./DashboardClient"), { ssr: false });
 
 export default function Page() {
-    return <DashboardPage />;
+    return <DashboardClient />;
 }
