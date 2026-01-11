@@ -22,7 +22,7 @@ export const UserMoviesProvider = ({ children }: { children: React.ReactNode }) 
         const handleMount = async () => {
             try {
                 const movies = await getMovies();
-                setUserMovies(movies.results);
+                setUserMovies(movies);
             } catch (err) {
                 console.log(err);
             }
