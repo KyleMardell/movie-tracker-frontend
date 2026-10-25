@@ -11,11 +11,6 @@ type SignUpPayload = {
     password: string;
 };
 
-type RefreshResponse = {
-    access: string;
-    refresh?: string;
-};
-
 type Movie = {
     title: string;
     tmdb_id: number;
@@ -37,10 +32,7 @@ export const signUpUser = async (username: string, password: string) => {
 };
 
 // Refresh access token function
-export const refreshAccessToken = async (refreshToken: string): Promise<RefreshResponse> => {
-    const response = await api.post('/api/token/refresh/', { refresh: refreshToken });
-    return response.data;
-};
+export { refreshSession as refreshAccessToken } from "./axios";
 
 // Add Movie to users list
 export const addMovie = async (movie: Movie) => {
@@ -49,8 +41,8 @@ export const addMovie = async (movie: Movie) => {
 };
 
 // Get users Movie list
-export const getMovies = async () => {
-    const response = await api.get('/api/movies/');
+export const getMovies = async (signal?: AbortSignal) => {
+    const response = await api.get('/api/movies/', { signal });
     return response.data;
 };
 

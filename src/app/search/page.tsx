@@ -8,6 +8,7 @@ import { searchMovies } from "../lib/tmdb";
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
 import styles from "./MovieSearchPage.module.css";
+import { getErrorMessage } from "../lib/error";
 
 // types
 type Movie = {
@@ -56,8 +57,8 @@ const MovieSearchPage = () => {
             if (response.data.results.length == 0) {
                 setNoResults(true);
             }
-        } catch (err: any) {
-            setError(err);
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Unable to search movies. Please try again."));
             setShowError(true);
         } finally {
             setResultsLoading(false);
@@ -84,7 +85,7 @@ const MovieSearchPage = () => {
     }, [resultsPage, searchTerm]);
 
     // shows the movie modal when a movie is clicked
-    const handleMovieClick = (movie: any) => {
+    const handleMovieClick = (movie: Movie) => {
         setSelectedMovie(movie);
         setModalShow(true);
     };

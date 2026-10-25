@@ -9,6 +9,7 @@ import { getPopularMovies, getTrendingMovies, getTopRatedMovies } from "../lib/t
 import MovieCarousel from "../components/moviecarousel/MovieCarousel";
 import MovieModal from "../components/moviemodal/MovieModal";
 import styles from "./Dashboard.module.css";
+import { getErrorMessage } from "../lib/error";
 
 // types
 type Movie = {
@@ -26,7 +27,10 @@ const DashboardPage = () => {
     const { user, isLoading } = useAuth();
     const router = useRouter();
 
-    const [showWelcome, setShowWelcome] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(() =>
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("welcome") === "true"
+    );
 
     const mountedPopular = useRef(false);
     const mountedTrending = useRef(false);
@@ -47,17 +51,10 @@ const DashboardPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [showError, setShowError] = useState(false);
 
-    // User auth, checks for a user and a new user welcome param
+    // User auth
     useEffect(() => {
         if (!isLoading && !user) {
             router.push("/login");
-        }
-
-        if (typeof window !== "undefined") {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get("welcome") === "true") {
-                setShowWelcome(true);
-            }
         }
     }, [user, isLoading, router]);
 
@@ -77,9 +74,9 @@ const DashboardPage = () => {
                 try {
                     const response = await getPopularMovies(1);
                     setImdbData(response.data.results);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error(err);
-                    setError(err);
+                    setError(getErrorMessage(err));
                     setShowError(true);
                 } finally {
                     setPageLoading(false);
@@ -98,9 +95,9 @@ const DashboardPage = () => {
                 try {
                     const response = await getPopularMovies(page);
                     setImdbData(prev => [...prev, ...response.data.results]);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error(err);
-                    setError(err);
+                    setError(getErrorMessage(err));
                     setShowError(true);
                 } finally {
                     setPageLoading(false);
@@ -119,9 +116,9 @@ const DashboardPage = () => {
                 try {
                     const response = await getTopRatedMovies(1);
                     setRatedData(response.data.results);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error(err);
-                    setError(err);
+                    setError(getErrorMessage(err));
                     setShowError(true);
                 } finally {
                     setRatedPageLoading(false);
@@ -140,9 +137,9 @@ const DashboardPage = () => {
                 try {
                     const response = await getTopRatedMovies(ratedPage);
                     setRatedData(prev => [...prev, ...response.data.results]);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error(err);
-                    setError(err);
+                    setError(getErrorMessage(err));
                     setShowError(true);
                 } finally {
                     setRatedPageLoading(false);
@@ -162,9 +159,9 @@ const DashboardPage = () => {
                 try {
                     const response = await getTrendingMovies();
                     setTrendingData(response.data.results);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error(err);
-                    setError(err);
+                    setError(getErrorMessage(err));
                     setShowError(true);
                 } finally {
                     setPageLoading(false);

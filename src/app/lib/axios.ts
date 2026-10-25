@@ -1,77 +1,76 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
+import { clearAuthData, getSession, updateSessionTokens } from "./session";
 
-// set custom api base url
-const api = axios.create({
-    baseURL: "https://movie-tracker-api.cap.kylemardell.me/",
+const baseURL = "https://api.movietracker.kylemardell.me/";
+const api = axios.create({ baseURL });
+// Refresh requests bypass the interceptors to avoid recursive refresh attempts.
+const tokenApi = axios.create({ baseURL });
+type SessionRequest = InternalAxiosRequestConfig & {
+    _sessionVersion?: number;
+    _accessToken?: string;
+    _retry?: boolean;
+};
+
+let refreshInFlight: { version: number; promise: Promise<ReturnType<typeof getSession>> } | null = null;
+
+export const refreshSession = () => {
+    const session = getSession();
+    if (!session.data) return Promise.reject(new Error("Not authenticated."));
+    if (refreshInFlight?.version === session.version) return refreshInFlight.promise;
+    const refreshToken = session.data.refreshToken;
+
+    const promise = (async () => {
+        try {
+            const response = await tokenApi.post("/api/token/refresh/", { refresh: refreshToken });
+            return updateSessionTokens(session.version, response.data.access, response.data.refresh);
+        } catch {
+            if (getSession().version === session.version) clearAuthData();
+            throw new Error("Your session has expired. Please log in again.");
+        } finally {
+            if (refreshInFlight?.version === session.version) refreshInFlight = null;
+        }
+    })();
+    refreshInFlight = { version: session.version, promise };
+    return promise;
+};
+
+const isAuthRequest = (url = "") => /^\/?api\/(token(?:\/refresh)?|register)\/$/.test(url);
+
+api.interceptors.request.use((config: SessionRequest) => {
+    const session = getSession();
+    // A retry from an old account must never execute under a new account.
+    if (config._retry && config._sessionVersion !== session.version) {
+        throw new axios.CanceledError("Session changed.");
+    }
+    config.headers.delete("Authorization");
+    if (!isAuthRequest(config.url) && session.data) {
+        config.headers.set("Authorization", `Bearer ${session.data.accessToken}`);
+        config._accessToken = session.data.accessToken;
+        config._sessionVersion = session.version;
+    }
+    return config;
 });
 
-// Attach access token to every request
-api.interceptors.request.use(
-    (config) => {
-        const stored = localStorage.getItem("movieTrackerData");
-        if (stored) {
-            const data = JSON.parse(stored);
-            if (data.accessToken) {
-                config.headers.Authorization = `Bearer ${data.accessToken}`;
-            }
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
-
-// Handle expired access token
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-
-        // If access token expired and we haven't retried yet
-        if (
-            error.response?.status === 401 &&
-            !originalRequest._retry
-        ) {
-            originalRequest._retry = true;
-
-            const stored = localStorage.getItem("movieTrackerData");
-            if (!stored) return Promise.reject(error);
-
-            const data = JSON.parse(stored);
-
-            try {
-                const refreshResponse = await axios.post(
-                    "https://movie-tracker-api.cap.kylemardell.me/api/token/refresh/",
-                    { refresh: data.refreshToken }
-                );
-
-                const newAccessToken = refreshResponse.data.access;
-
-                // Update localStorage
-                const updatedData = {
-                    ...data,
-                    accessToken: newAccessToken,
-                };
-                localStorage.setItem(
-                    "movieTrackerData",
-                    JSON.stringify(updatedData)
-                );
-
-                // Update header and retry original request
-                api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
-                originalRequest.headers = {
-                    ...originalRequest.headers,
-                    Authorization: `Bearer ${newAccessToken}`,
-                };
-                return api(originalRequest);
-            } catch (refreshError) {
-                // Refresh failed → log out
-                localStorage.removeItem("movieTrackerData");
-                return Promise.reject(refreshError);
-            }
-        }
-
-        return Promise.reject(error);
+api.interceptors.response.use(response => {
+    const request = response.config as SessionRequest;
+    if (request._sessionVersion !== undefined && request._sessionVersion !== getSession().version) {
+        throw new axios.CanceledError("Session changed.");
     }
-);
+    return response;
+}, async error => {
+    const request = error.config as SessionRequest | undefined;
+    if (!request || error.response?.status !== 401 || isAuthRequest(request.url)) throw error;
+
+    const current = getSession();
+    if (!current.data || request._sessionVersion !== current.version) throw new axios.CanceledError("Session changed.");
+    if (request._retry) {
+        clearAuthData();
+        throw new Error("Your session has expired. Please log in again.");
+    }
+    request._retry = true;
+    // Another request may have already refreshed while this 401 was in flight.
+    if (request._accessToken === current.data.accessToken) await refreshSession();
+    return api(request);
+});
 
 export default api;

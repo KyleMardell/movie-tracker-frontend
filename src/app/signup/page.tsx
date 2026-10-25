@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../useAuth";
 import { signUpUser } from "../lib/api";
+import { getErrorMessage } from "../lib/error";
 
 // Types
 type SignUpFormData = {
@@ -52,7 +53,6 @@ const SignUpPage = () => {
         if (password1 === password2) {
             try {
                 const response = await signUpUser(username, password1);
-                console.log("User signed up:", response);
                 const data = {
                     user: username,
                     accessToken: response.data.access,
@@ -62,8 +62,8 @@ const SignUpPage = () => {
                 setAuthData(data);
                 router.push("/?welcome=true");
                 // ADD SUCCESS MESSAGE UPON SIGN UP
-            } catch (err: any) {
-                setError(err);
+            } catch (err: unknown) {
+                setError(getErrorMessage(err, "Unable to create your account. Please try again."));
                 setShowError(true);
             }
         } else {

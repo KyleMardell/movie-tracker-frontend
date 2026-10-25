@@ -31,70 +31,55 @@ type MovieModalProps = {
 // Loads the movie details and watch providers on mount
 const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
     const id = movie?.tmdb_id ?? movie?.id;
-    const [movieDetail, setMovieDetail] = useState<TMDBMovie | null>(null);
-    const [loadingDetail, setLoadingDetail] = useState(false);
-    const [movieProviders, setMovieProviders] = useState<CountryProviders | null>(null);
+    // Each selection gets fresh state, including reopening the same movie.
+    return <MovieModalContent key={show ? id ?? "none" : "closed"} movie={movie} show={show} onHide={onHide} />;
+};
 
+const MovieModalContent = ({ movie, show, onHide }: MovieModalProps) => {
+    const id = movie?.tmdb_id ?? movie?.id;
+    const [movieDetail, setMovieDetail] = useState<TMDBMovie | null>(null);
+    const [loadingDetail, setLoadingDetail] = useState(Boolean(id && show));
+    const [movieProviders, setMovieProviders] = useState<CountryProviders | null>(null);
     const context = useContext(UserMoviesContext);
-    if (!context) return null;
-    const { userMovies, setUserMovies } = context;
-    const [movieIsInList, setMovieIsInList] = useState(false);
-    const [addedMovieID, setAddedMovieID] = useState<number | null>(null);
-    const [isWatched, setIsWatched] = useState(false);
+    const foundMovie = context?.userMovies.find(movie => movie.tmdb_id === id);
+    const movieIsInList = Boolean(foundMovie);
+    const addedMovieID = foundMovie?.id ?? null;
+    const isWatched = foundMovie?.watched ?? false;
+    const setUserMovies = context?.setUserMovies;
 
     // gets the movie details and watch providers
     useEffect(() => {
-        if (!id) {
-            setMovieDetail(null);
-            return;
-        }
+        if (!id || !show) return;
+        let active = true;
 
         const loadMovieDetail = async () => {
-            setLoadingDetail(true);
             try {
                 const response = await getMovieDetail(id);
-                setMovieDetail(response.data);
-            } catch (err) {
-                console.log(err);
+                if (active) setMovieDetail(response.data);
+            } catch {
+                console.error("Unable to complete movie request.");
             } finally {
-                setLoadingDetail(false);
+                if (active) setLoadingDetail(false);
             }
         };
 
         const loadMovieProviders = async () => {
             try {
                 const response = await getMovieProviders(id);
-                setMovieProviders(response.data.results["GB"] || null);
-            } catch (err) {
-                console.log(err);
+                if (active) setMovieProviders(response.data.results["GB"] || null);
+            } catch {
+                console.error("Unable to complete movie request.");
             }
         };
 
         loadMovieDetail();
         loadMovieProviders();
-    }, [id]);
-
-    // Check if the movie exists in the users list
-    useEffect(() => {
-        if (userMovies && movieDetail) {
-            const foundMovie = userMovies.find(
-                (m) => m.tmdb_id === movieDetail.id
-            );
-
-            if (foundMovie) {
-                setMovieIsInList(true);
-                setAddedMovieID(foundMovie.id);
-                setIsWatched(foundMovie.watched);
-            } else {
-                setMovieIsInList(false);
-                setAddedMovieID(null);
-            }
-        }
-    }, [userMovies, movieDetail]);
+        return () => { active = false; };
+    }, [id, show]);
 
     // Adds the movie to the users list and updates the context
     const handleAddToList = async () => {
-        if (!movieDetail) return;
+        if (!movieDetail || !setUserMovies) return;
 
         const movieToAdd: MovieToAdd = {
             title: movieDetail.title,
@@ -107,35 +92,31 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
             const response = await addMovie(movieToAdd);
             if (response.status === 201) {
                 setUserMovies(prev => [...prev, response.data]);
-                setMovieIsInList(true);
-                setAddedMovieID(response.data.id);
             }
-        } catch (err) {
-            console.log(err);
+        } catch {
+            console.error("Unable to complete movie request.");
         }
     };
 
     // Deletes movie from the users list and updates the context
     const handleDeleteFromList = async () => {
-        if (!addedMovieID) return;
+        if (!addedMovieID || !setUserMovies) return;
 
         try {
             const response = await deleteMovie(addedMovieID);
             if (response.status === 204) {
-                setMovieIsInList(false);
                 setUserMovies((prev) =>
                     prev.filter((mov) => mov.id !== addedMovieID)
                 );
-                setAddedMovieID(null);
             }
-        } catch (err) {
-            console.log(err);
+        } catch {
+            console.error("Unable to complete movie request.");
         }
     };
 
     // updates the watched status
     const handleUpdateWatched = async () => {
-        if (!addedMovieID) return;
+        if (!addedMovieID || !setUserMovies) return;
 
         try {
             const response = await updateWatchedMovie(addedMovieID);
@@ -148,19 +129,12 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
                     )
                 );
             }
-        } catch (err) {
-            console.log(err);
+        } catch {
+            console.error("Unable to complete movie request.");
         }
     };
 
-    // Resets the modal when closed
-    const resetModalState = () => {
-        setMovieDetail(null);
-        setMovieIsInList(false);
-        setAddedMovieID(null);
-        setIsWatched(false);
-        setMovieProviders(null);
-    };
+    if (!context) return null;
 
     // renders the movie details and watch providers
     return (
@@ -169,10 +143,7 @@ const MovieModal = ({ movie, show, onHide }: MovieModalProps) => {
             size="lg"
             aria-labelledby={`${movie?.title} details`}
             centered
-            onHide={() => {
-                resetModalState();
-                onHide();
-            }}
+            onHide={onHide}
             className={styles.movieModal}
         >
             <div

@@ -7,6 +7,7 @@ import { useAuth } from "../useAuth";
 import { Container, Row, Col, Button, Alert, Form } from "react-bootstrap";
 import Link from "next/link";
 import styles from "./LoginPage.module.css";
+import axios from "axios";
 
 // log in page allows users to log in
 // saves tokens to local storage
@@ -38,8 +39,8 @@ const LoginPage = () => {
             };
             setAuthData(data);
             router.push("/");
-        } catch (err: any) {
-            if (err.response && err.response.status === 401) {
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err) && err.response?.status === 401) {
                 setError("Invalid username or password.");
             } else {
                 setError("API Network Error, please try again.");
@@ -86,7 +87,7 @@ const LoginPage = () => {
             </Row>
             <Row className="text-center my-3">
                 <Col>
-                    <p className="electrolize-regular">Don't have an account, <Link className={styles.signupLink} href="/signup">Sign Up Here</Link>.<br />No email required!</p>
+                    <p className="electrolize-regular">Don&apos;t have an account, <Link className={styles.signupLink} href="/signup">Sign Up Here</Link>.<br />No email required!</p>
                 </Col>
             </Row>
         </Container>

@@ -29,7 +29,16 @@ const UserMoviesPage = () => {
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
     const [selectedFilter, setSelectedFilter] = useState("all");
-    const [filteredList, setFilteredList] = useState<Movie[]>([]);
+    const userMovies = context?.userMovies ?? [];
+    const filteredUserMovies = selectedFilter === "watched"
+        ? userMovies.filter(movie => movie.watched === true)
+        : selectedFilter === "unwatched"
+            ? userMovies.filter(movie => movie.watched === false)
+            : userMovies;
+    const filteredList: Movie[] = filteredUserMovies.map(movie => ({
+        ...movie,
+        poster_path: "",
+    }));
 
     // User auth
     useEffect(() => {
@@ -39,18 +48,6 @@ const UserMoviesPage = () => {
     }, [user, isLoading]);
 
     if (!context) return null;
-
-    const { userMovies } = context;
-
-    useEffect(() => {
-        if (selectedFilter === "all") {
-            setFilteredList(userMovies);
-        } else if (selectedFilter === "watched") {
-            setFilteredList(userMovies.filter(movie => movie.watched === true));
-        } else if (selectedFilter === "unwatched") {
-            setFilteredList(userMovies.filter(movie => movie.watched === false));
-        }
-    }, [userMovies, selectedFilter]);
 
     // shows modal when a movie is clicked
     const handleMovieClick = (movie: Movie) => {
@@ -69,7 +66,7 @@ const UserMoviesPage = () => {
         <Container>
             <Row className="my-5 text-center">
                 <Col>
-                    <h1>{user}'s<br />Movie List</h1>
+                    <h1>{user}&apos;s<br />Movie List</h1>
                 </Col>
             </Row>
             <Row className="mb-5">
